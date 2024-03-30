@@ -1,6 +1,8 @@
 ﻿# Crime Remover
 
-This is a mod for `Cities: Skylines 2` that removes crime from the game.
+This is a mod for `Cities: Skylines 2` that removes crime from your city.
+
+But also you could make your city a "Vice City" through the mod settings.
 
 This mod should works well with new or existing save games and be safe to
 remove from the game without any side effects.
