@@ -1,0 +1,40 @@
+﻿<Publish>
+	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
+	<ModId Value="" />
+	<!--Name of the mod to display to players-->
+	<DisplayName Value="Crime Remover" />
+	<!--Short description of the mod-->
+	<ShortDescription Value="Remove crime from your city" />
+	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
+	<!--LongDescription Value="This is a long description" /-->
+	<LongDescription>
+# Crime Remover
+
+This is a mod for `Cities: Skylines 2` that removes crime for your city.
+
+But also you could make your city a "Vice City" through the mod settings.
+
+This mod should works well with new or existing save games and be safe to
+remove from the game without any side effects.
+
+	</LongDescription>
+	<!--Thumbnail-->
+	<Thumbnail Value="Properties/Thumbnail.png" />
+	<!--Screenshot, can be set multiple times-->
+	<Screenshot Value="Properties/Screenshots/1.jpg" />
+	<Screenshot Value="Properties/Screenshots/2.jpg" />
+	<!--Tag, can be set multiple times-->
+	<Tag Value="Code Mod" />
+	<!--Link to the forum post where the mod can be discussed-->
+	<ForumLink Value="" />
+	<!--Version of the mod-->
+	<ModVersion Value="0.1.0" />
+	<!--Recommended version of the base game to use the mod-->
+	<GameVersion Value="1.1.*" />
+	<!--Dependency for the mod, can be set multiple times-->
+	<Dependency Id="" />
+	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
+	<ChangeLog>Inital release</ChangeLog>
+	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
+	<ExternalLink Type="github" Url="https://github.com/Roll-W/CSL2-CrimeRemover" />
+</Publish>
