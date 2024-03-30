@@ -53,10 +53,6 @@ namespace CrimeRemover.Setting
                 .AddTranslation(LocaleCode.ZhHans, "最大犯罪值")
                 .AddTranslation(LocaleCode.ZhHant, "最大犯罪值"),
             new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.MaxCrime]")
-                .AddTranslation(LocaleCode.EnUs, "The maximum crime value")
-                .AddTranslation(LocaleCode.ZhHans, "设置最大犯罪值")
-                .AddTranslation(LocaleCode.ZhHant, "設置最大犯罪值"),
-            new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.MaxCrime]")
                 .AddTranslation(LocaleCode.EnUs, "The maximum crime value. When this value is greater than 25000, " +
                                                  "it may cause the city crime rate to be greater than 100%.")
                 .AddTranslation(LocaleCode.ZhHans, "设置最大犯罪值。此值大于 25000 时可能导致城市犯罪率大于 100%。")
