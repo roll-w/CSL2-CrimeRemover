@@ -18,7 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Colossal.IO.AssetDatabase;
+using Colossal.Json;
 using Colossal.Logging;
+using CrimeRemover.Setting;
 using CrimeRemover.System;
 using Game;
 using Game.Modding;
@@ -28,8 +31,11 @@ namespace CrimeRemover
 {
     public class Mod : IMod
     {
-        private static readonly ILog LOG = LogManager.GetLogger($"{nameof(CrimeRemover)}.{nameof(Mod)}")
-            .SetShowsErrorsInUI(false);
+        public const string Name = "RollW_CrimeRemover";
+        private static readonly ILog LOG = LogManager.GetLogger($"{Name}.Mod")
+            .SetShowsErrorsInUI(true);
+
+        public static CrimeSetting Setting { get; private set; }
 
         public void OnLoad(UpdateSystem updateSystem)
         {
@@ -40,6 +46,15 @@ namespace CrimeRemover
             {
                 LOG.Info($"Current mod asset at {asset.path}");
             }
+            Setting = new CrimeSetting(this);
+            Setting.RegisterInOptionsUI();
+            Localizations.LoadTranslations();
+
+            AssetDatabase.global.LoadSettings(Name,
+                Setting, new CrimeSetting(this)
+            );
+
+            LOG.Info($"Load settings: {Setting.ToJSONString()}");
 
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
@@ -50,6 +65,6 @@ namespace CrimeRemover
             LOG.Info(nameof(OnDispose));
         }
 
-        public ILog GetLogger() => LOG;
+        public static ILog GetLogger() => LOG;
     }
 }

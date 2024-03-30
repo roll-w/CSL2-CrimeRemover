@@ -18,6 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
+using Game;
+using Game.City;
+using Game.Prefabs;
+
 namespace CrimeRemover.System
 {
     using Game.Buildings;
@@ -26,17 +32,47 @@ namespace CrimeRemover.System
     using Unity.Collections;
     using Unity.Entities;
 
-    public sealed partial class CrimeRemoverSystem : SystemBase
+    public sealed partial class CrimeRemoverSystem : GameSystemBase
     {
         private EntityQuery _crimeProducersQuery;
 
         protected override void OnUpdate()
         {
-            var entities = _crimeProducersQuery.ToEntityArray(
-                Allocator.Temp);
-            foreach (var entity in entities)
+            if (!Mod.Setting.EnableCrimeRemover)
             {
+                return;
+            }
+
+            var maxCrime = Mod.Setting.MaxCrime;
+            var buildingPercentage = Mod.Setting.CrimeBuildingPercentage;
+            var crimePercentage = Mod.Setting.CrimePercentage;
+            // calculate the crime coefficient based on the percentage
+            var crimeCoefficient  = maxCrime * crimePercentage / 100;
+
+            var entities = _crimeProducersQuery
+                .ToEntityArray(Allocator.Temp);
+
+
+            var length = entities.Length;
+
+            var wouldBeCrime = 0;
+            if (buildingPercentage > 0)
+            {
+                // calculate the number of buildings that would have crime
+                wouldBeCrime = (int)(length * buildingPercentage / 100);
+            }
+
+            for (var index = 0; index < length; index++)
+            {
+                var entity = entities[index];
                 var crimeProducer = EntityManager.GetComponentData<CrimeProducer>(entity);
+                if (index < wouldBeCrime)
+                {
+                    crimeProducer.m_Crime = crimeCoefficient;
+                    EntityManager.SetComponentData(entity, crimeProducer);
+                    continue;
+                }
+
                 if (crimeProducer.m_Crime <= 0)
                 {
                     continue;
@@ -48,7 +84,7 @@ namespace CrimeRemover.System
                 crimeProducer.m_PatrolRequest = default;
                 EntityManager.SetComponentData(entity, crimeProducer);
 
-                if (rawRequest != default)
+                if (rawRequest != default || rawRequest != Entity.Null)
                 {
                     EntityManager.AddComponent<Deleted>(rawRequest);
                 }
@@ -59,10 +95,23 @@ namespace CrimeRemover.System
         {
             base.OnCreate();
 
-            _crimeProducersQuery = GetEntityQuery(new EntityQueryBuilder()
-                .WithAll<CrimeProducer>()
-                .WithNone<Deleted, Temp>()
+            _crimeProducersQuery = GetEntityQuery(
+                ComponentType.ReadWrite<CrimeProducer>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
             );
+
+            RequireForUpdate(_crimeProducersQuery);
+        }
+
+        public override int GetUpdateInterval(SystemUpdatePhase phase)
+        {
+            return 1;
+        }
+
+        public override int GetUpdateOffset(SystemUpdatePhase phase)
+        {
+            return -1;
         }
     }
 }
