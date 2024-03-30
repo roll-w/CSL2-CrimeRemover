@@ -2,10 +2,13 @@
 
 This is a mod for `Cities: Skylines 2` that removes crime from your city.
 
-But also you could make your city a "Vice City" through the mod settings.
+But you could also make your city a "Vice City" through the mod settings.
 
 This mod should works well with new or existing save games and be safe to
 remove from the game without any side effects.
+
+If you have any problems during using this mod, please open an issue or discussion
+on Github.
 
 ## License
 
