@@ -17,8 +17,8 @@ But you could also make your city a "Vice City" through the mod settings.
 This mod should works well with new or existing save games and be safe to
 remove from the game without any side effects.
 
-If you have any problems during using this mod, please open an issue or discussion
-on Github.
+**If you have any problems during using this mod, please open an issue or discussion
+on Github.**
 	</LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />
@@ -30,19 +30,15 @@ on Github.
 	<!--Link to the forum post where the mod can be discussed-->
 	<ForumLink Value="" />
 	<!--Version of the mod-->
-	<ModVersion Value="0.1.1" />
+	<ModVersion Value="0.2.0" />
 	<!--Recommended version of the base game to use the mod-->
 	<GameVersion Value="1.1.*" />
 	<!--Dependency for the mod, can be set multiple times-->
 	<Dependency Id="" />
 	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 	<ChangeLog>
-## 0.1.1
-
-- Fixed an issue with setting option description
-
-## 0.1.0
-Inital release
+- Feature: Allow disable police patrol to reduce system load.
+- Feature: Allow remove the "Crime Scene" notification.
 	</ChangeLog>
 	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
 	<ExternalLink Type="github" Url="https://github.com/Roll-W/CSL2-CrimeRemover" />
