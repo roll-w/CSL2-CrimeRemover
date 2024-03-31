@@ -69,6 +69,7 @@ namespace CrimeRemover
             LOG.Info($"Load settings: {Setting.ToJSONString()}");
 
             updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.Deserialize);
+            updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
         }
