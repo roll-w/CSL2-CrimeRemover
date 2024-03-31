@@ -28,7 +28,7 @@ namespace CrimeRemover.Setting;
 [SettingsUIShowGroupName(Experimental)]
 public class CrimeSetting(IMod mod) : ModSetting(mod)
 {
-    public const string Experimental = "Experimental";
+    private const string Experimental = "Experimental";
 
     /**
      * Enable or disable the crime remover
@@ -58,7 +58,31 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
     [SettingsUISection(Experimental)]
     public float CrimePercentage { get; set; } = 0;
 
+    /**
+     * Enable police patrol
+     */
+    [SettingsUISection(Experimental)]
+    public bool PolicePatrol { get; set; } = true;
 
+    /**
+     * Remove the notification when the crime is removed
+     */
+    [SettingsUISection(Experimental)]
+    public NotificationType RemoveNotification { get; set; } = NotificationType.NeverRemove;
+
+    public bool NeedRemoveNotification()
+    {
+        return RemoveNotification switch
+        {
+            NotificationType.AlwaysRemove => true,
+            NotificationType.NeverRemove => false,
+            NotificationType.OnlyEnable => EnableCrimeRemover,
+            // if the building crime percentage is greater than 0,
+            // then we will not remove the notification
+            NotificationType.OnlyPercentage => EnableCrimeRemover && CrimePercentage == 0,
+            _ => false
+        };
+    }
 
     public override void SetDefaults()
     {
@@ -66,6 +90,8 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
         CrimeBuildingPercentage = 0;
         CrimePercentage = 0;
         MaxCrime = 25000;
+        PolicePatrol = true;
+        RemoveNotification = NotificationType.NeverRemove;
     }
 
     public override void Apply()

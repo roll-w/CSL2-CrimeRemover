@@ -25,6 +25,7 @@ namespace CrimeRemover.Setting
 {
     public static class Localizations
     {
+        // TODO: generate keys using ModSettings
         private static readonly Translation[] Translations =
         [
             new Translation("Options.SECTION[CrimeRemover.CrimeRemover.Mod]")
@@ -36,15 +37,17 @@ namespace CrimeRemover.Setting
                 .AddTranslation(LocaleCode.ZhHans, "启用犯罪移除器")
                 .AddTranslation(LocaleCode.ZhHant, "啟用犯罪移除器"),
             new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.EnableCrimeRemover]")
-                .AddTranslation(LocaleCode.EnUs, "Enable or disable the crime remover. When disabled, the set crime values will not be removed, " +
-                                                 "but no new crime values will be set or removed")
+                .AddTranslation(LocaleCode.EnUs,
+                    "Enable or disable the crime remover. When disabled, the set crime values will not be removed, " +
+                    "but no new crime values will be set or removed")
                 .AddTranslation(LocaleCode.ZhHans, "在此启用或禁用犯罪移除器。在禁用时，已设置的犯罪值不会被移除，但不会再继续设置或移除新的犯罪值")
                 .AddTranslation(LocaleCode.ZhHant, "在此啟用或禁用犯罪移除器。在禁用時，已設置的犯罪值不會被移除，但不會再繼續設置或移除新的犯罪值"),
             new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.CrimeBuildingPercentage]")
                 .AddTranslation(LocaleCode.EnUs, "Building Crime Percentage")
                 .AddTranslation(LocaleCode.ZhHans, "建筑犯罪百分比")
                 .AddTranslation(LocaleCode.ZhHant, "建築犯罪百分比"),
-            new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.CrimeBuildingPercentage]")
+            new Translation(
+                    "Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.CrimeBuildingPercentage]")
                 .AddTranslation(LocaleCode.EnUs, "Set the global buildings crime percentage")
                 .AddTranslation(LocaleCode.ZhHans, "设置全局建筑犯罪百分比")
                 .AddTranslation(LocaleCode.ZhHant, "設置全局建築犯罪百分比"),
@@ -66,6 +69,48 @@ namespace CrimeRemover.Setting
                                                  "the final building crime value is Building Crime Multiplier Rate * Max Crime")
                 .AddTranslation(LocaleCode.ZhHans, "建筑犯罪值乘率，最终建筑犯罪值为 建筑犯罪值乘率 * 最大犯罪值")
                 .AddTranslation(LocaleCode.ZhHant, "建築犯罪值乘率，最終建築犯罪值為 建築犯罪值乘率 * 最大犯罪值"),
+            new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.PolicePatrol]")
+                .AddTranslation(LocaleCode.EnUs, "Enable Police Patrol")
+                .AddTranslation(LocaleCode.ZhHans, "启用警察巡逻")
+                .AddTranslation(LocaleCode.ZhHant, "啟用警察巡邏"),
+            new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.PolicePatrol]")
+                .AddTranslation(LocaleCode.EnUs,
+                    "Enable police patrol. When disabled, the police will no longer patrol, " +
+                    "but the patrol for buildings not set crime values by the mod will still continue. " +
+                    "If you set the building crime percentage, since the mod will always set the crime value, " +
+                    "the police patrol will not reduce the building crime value, " +
+                    "it may reduce some occupation after disabling")
+                .AddTranslation(LocaleCode.ZhHans,
+                    "启用警察巡逻。禁用后，警察将不再巡逻，但针对未被Mod设置犯罪值的建筑的巡逻仍将继续。\\n" +
+                    "如果你设置了建筑犯罪百分比，由于本Mod会始终设置犯罪值，警察巡逻无法使建筑犯罪值降低，禁用后或可降低部分占用")
+                .AddTranslation(LocaleCode.ZhHant,
+                    "啟用警察巡邏。禁用後，警察將不再巡邏，但針對未被Mod設置犯罪值的建築的巡邏仍將繼續。\\n" +
+                    "如果你設置了建築犯罪百分比，由於本Mod會始終設置犯罪值，警察巡邏無法使建築犯罪值降低，禁用後或可降低部分佔用"),
+            new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveNotification]")
+                .AddTranslation(LocaleCode.EnUs, "Remove Notification")
+                .AddTranslation(LocaleCode.ZhHans, "移除通知")
+                .AddTranslation(LocaleCode.ZhHant, "移除通知"),
+            new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveNotification]")
+                .AddTranslation(LocaleCode.EnUs, "Remove the Crime Scene notification when the crime is removed")
+                .AddTranslation(LocaleCode.ZhHans, "移除犯罪值时移除犯罪现场通知")
+                .AddTranslation(LocaleCode.ZhHant, "移除犯罪值時移除犯罪現場通知"),
+            new Translation("Options.CrimeRemover.CrimeRemover.Mod.NOTIFICATIONTYPE[AlwaysRemove]")
+                .AddTranslation(LocaleCode.EnUs, "Always remove")
+                .AddTranslation(LocaleCode.ZhHans, "始终移除")
+                .AddTranslation(LocaleCode.ZhHant, "始終移除"),
+            new Translation("Options.CrimeRemover.CrimeRemover.Mod.NOTIFICATIONTYPE[NeverRemove]")
+                .AddTranslation(LocaleCode.EnUs, "Never remove")
+                .AddTranslation(LocaleCode.ZhHans, "从不移除")
+                .AddTranslation(LocaleCode.ZhHant, "從不移除"),
+            new Translation("Options.CrimeRemover.CrimeRemover.Mod.NOTIFICATIONTYPE[OnlyEnable]")
+                .AddTranslation(LocaleCode.EnUs, "Only remove when enabled")
+                .AddTranslation(LocaleCode.ZhHans, "仅在启用时移除")
+                .AddTranslation(LocaleCode.ZhHant, "僅在啟用時移除"),
+            new Translation(
+                    "Options.CrimeRemover.CrimeRemover.Mod.NOTIFICATIONTYPE[OnlyPercentage]")
+                .AddTranslation(LocaleCode.EnUs, "Only remove when the building crime percentage is 0")
+                .AddTranslation(LocaleCode.ZhHans, "仅在建筑犯罪百分比为 0 时移除")
+                .AddTranslation(LocaleCode.ZhHant, "僅在建築犯罪百分比為 0 時移除"),
             new Translation("Options.GROUP[CrimeRemover.CrimeRemover.Mod.Experimental]")
                 .AddTranslation(LocaleCode.EnUs, "Experimental")
                 .AddTranslation(LocaleCode.ZhHans, "实验性")

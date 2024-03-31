@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Colossal.IO.AssetDatabase;
 using Colossal.Json;
 using Colossal.Logging;
@@ -39,8 +40,19 @@ namespace CrimeRemover
 
         public void OnLoad(UpdateSystem updateSystem)
         {
-            LOG.Info(nameof(OnLoad));
+            try
+            {
+                LOG.Info(nameof(OnLoad));
+                SetupOnLoad(updateSystem);
+            }
+            catch (Exception e)
+            {
+                LOG.Error(e, "Error during OnLoad");
+            }
+        }
 
+        private void SetupOnLoad(UpdateSystem updateSystem)
+        {
             if (GameManager.instance.modManager
                 .TryGetExecutableAsset(this, out var asset))
             {
@@ -56,6 +68,7 @@ namespace CrimeRemover
 
             LOG.Info($"Load settings: {Setting.ToJSONString()}");
 
+            updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
         }
