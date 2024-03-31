@@ -75,17 +75,16 @@ namespace CrimeRemover.Setting
                 .AddTranslation(LocaleCode.ZhHant, "啟用警察巡邏"),
             new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.PolicePatrol]")
                 .AddTranslation(LocaleCode.EnUs,
-                    "Enable police patrol. When disabled, the police will no longer patrol, " +
-                    "but the patrol for buildings not set crime values by the mod will still continue. " +
-                    "If you set the building crime percentage, since the mod will always set the crime value, " +
+                    "Enable police patrol. When disabled, the police will no longer patrol." +
+                    "If you set the building crime value greater than 0, as this mod will always set the crime value, " +
                     "the police patrol will not reduce the building crime value, " +
                     "it may reduce system load after disabling")
                 .AddTranslation(LocaleCode.ZhHans,
-                    "启用警察巡逻。禁用后，警察将不再巡逻，但针对未被Mod设置犯罪值的建筑的巡逻仍将继续。\\n" +
-                    "如果你设置了建筑犯罪百分比，由于本Mod会始终设置犯罪值，警察巡逻无法使建筑犯罪值降低，禁用后或可降低部分系统占用")
+                    "启用警察巡逻。禁用后，警察将不再巡逻。" +
+                    "如果你设置了建筑犯罪值大于0，由于本Mod会始终设置犯罪值，警察巡逻无法使建筑犯罪值降低，禁用后或可降低部分系统占用")
                 .AddTranslation(LocaleCode.ZhHant,
-                    "啟用警察巡邏。禁用後，警察將不再巡邏，但針對未被Mod設置犯罪值的建築的巡邏仍將繼續。\\n" +
-                    "如果你設置了建築犯罪百分比，由於本Mod會始終設置犯罪值，警察巡邏無法使建築犯罪值降低，禁用後或可降低部分系統佔用"),
+                    "啟用警察巡邏。禁用後，警察將不再巡邏。" +
+                    "如果你設置了建築犯罪值大于0，由於本Mod會始終設置犯罪值，警察巡邏無法使建築犯罪值降低，禁用後或可降低部分系統佔用"),
             new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveNotification]")
                 .AddTranslation(LocaleCode.EnUs, "Remove Notification")
                 .AddTranslation(LocaleCode.ZhHans, "移除通知")
