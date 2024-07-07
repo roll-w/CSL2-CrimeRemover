@@ -42,6 +42,15 @@ namespace CrimeRemover.Setting
                     "but no new crime values will be set or removed")
                 .AddTranslation(LocaleCode.ZhHans, "在此启用或禁用犯罪移除器。在禁用时，已设置的犯罪值不会被移除，但不会再继续设置或移除新的犯罪值")
                 .AddTranslation(LocaleCode.ZhHant, "在此啟用或禁用犯罪移除器。在禁用時，已設置的犯罪值不會被移除，但不會再繼續設置或移除新的犯罪值"),
+            new Translation(
+                    "Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveCriminals]")
+                .AddTranslation(LocaleCode.EnUs, "Remove Criminals")
+                .AddTranslation(LocaleCode.ZhHans, "移除罪犯")
+                .AddTranslation(LocaleCode.ZhHant, "移除罪犯"),
+            new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveCriminals]")
+                .AddTranslation(LocaleCode.EnUs, "When enabled, all criminals will be continuously removed.")
+                .AddTranslation(LocaleCode.ZhHans, "启用后，将持续移除所有罪犯。")
+                .AddTranslation(LocaleCode.ZhHant, "啟用後，將持續移除所有罪犯。"),
             new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.CrimeBuildingPercentage]")
                 .AddTranslation(LocaleCode.EnUs, "Building Crime Percentage")
                 .AddTranslation(LocaleCode.ZhHans, "建筑犯罪百分比")
@@ -89,14 +98,14 @@ namespace CrimeRemover.Setting
                     "如果你設置了建築犯罪值大于0，由於本Mod會始終設置犯罪值，警察巡邏無法使建築犯罪值降低，禁用後或可降低部分系統佔用。" +
                     "注意：禁用本選項不會阻止警察到達「犯罪現場」。"),
             new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveNotification]")
-                .AddTranslation(LocaleCode.EnUs, "Remove Notification")
-                .AddTranslation(LocaleCode.ZhHans, "移除通知")
-                .AddTranslation(LocaleCode.ZhHant, "移除通知"),
+                .AddTranslation(LocaleCode.EnUs, "Remove Crime Scene")
+                .AddTranslation(LocaleCode.ZhHans, "移除犯罪现场")
+                .AddTranslation(LocaleCode.ZhHant, "移除犯罪現場"),
             new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveNotification]")
-                .AddTranslation(LocaleCode.EnUs, "Remove the \"Crime Scene\" notification. " +
-                                                 "Removing the notification will not prevent the event from occurring.")
-                .AddTranslation(LocaleCode.ZhHans, "移除「犯罪现场」通知。移除通知不会阻止事件产生。")
-                .AddTranslation(LocaleCode.ZhHant, "移除「犯罪現場」通知。移除通知不會阻止事件產生。"),
+                .AddTranslation(LocaleCode.EnUs, "Remove the \"Crime Scene\" event. " +
+                                                 "Removing the notification also prevents the event from occurring.")
+                .AddTranslation(LocaleCode.ZhHans, "移除「犯罪现场」事件。移除通知同时阻止事件产生。")
+                .AddTranslation(LocaleCode.ZhHant, "移除「犯罪現場」事件。移除通知同時阻止事件產生。"),
             new Translation("Options.CrimeRemover.CrimeRemover.Mod.NOTIFICATIONTYPE[AlwaysRemove]")
                 .AddTranslation(LocaleCode.EnUs, "Always remove")
                 .AddTranslation(LocaleCode.ZhHans, "始终移除")
