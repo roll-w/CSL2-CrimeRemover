@@ -14,11 +14,11 @@ This is a mod for `Cities: Skylines 2` that removes crime from your city.
 
 But you could also make your city a "Vice City" through the mod settings.
 
-This mod should works well with new or existing save games and be safe to
+This mod should works well with new or existing saves and be safe to
 remove from the game without any side effects.
 
 **If you have any problems during using this mod, please open an issue or discussion
-on Github.**
+on GitHub.**
 	</LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />
@@ -28,17 +28,17 @@ on Github.**
 	<!--Tag, can be set multiple times-->
 	<Tag Value="Code Mod" />
 	<!--Link to the forum post where the mod can be discussed-->
-	<ForumLink Value="" />
+	<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/crime-remover.1656233" />
 	<!--Version of the mod-->
-	<ModVersion Value="0.2.0" />
+	<ModVersion Value="1.0.0" />
 	<!--Recommended version of the base game to use the mod-->
 	<GameVersion Value="1.1.*" />
 	<!--Dependency for the mod, can be set multiple times-->
 	<Dependency Id="" />
 	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 	<ChangeLog>
-- Feature: Allow disable police patrol to reduce system load.
-- Feature: Allow remove the "Crime Scene" notification.
+- Feature: Support removes criminals.
+- Feature: Support removes crime scene events.
 	</ChangeLog>
 	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
 	<ExternalLink Type="github" Url="https://github.com/Roll-W/CSL2-CrimeRemover" />

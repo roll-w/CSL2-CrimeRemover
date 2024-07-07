@@ -1,6 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Title>Crime Remover</Title>
+        <AssemblyTitle>$(Title)</AssemblyTitle>
+        <Description>A Cities: Skylines 2 mod.</Description>
+        <Authors>RollW</Authors>
+        <Copyright>Copyright (c) 2024 RollW (github.com/Roll-W). All rights reserved.</Copyright>
+        <Product>$(Title)</Product>
+        <Version>1.0.0</Version>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+
         <OutputType>Library</OutputType>
         <TargetFramework>net472</TargetFramework>
         <Configurations>Debug;Release</Configurations>
