@@ -21,6 +21,7 @@
 using System.Linq;
 using Game;
 using Game.Common;
+using Game.Events;
 using Game.Notifications;
 using Game.Prefabs;
 using Game.Tools;
@@ -33,7 +34,7 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
 {
     private EntityQuery _policeConfigurationQuery;
     private EntityQuery _notificationsQuery;
-
+    private EntityQuery _accicentSiteQuery;
 
     protected override void OnUpdate()
     {
@@ -41,6 +42,8 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
         {
             return;
         }
+
+        RemoveCrimeSceneEvents();
 
         var policeConfigurations = _policeConfigurationQuery
             .ToComponentDataArray<PoliceConfigurationData>(Allocator.Temp);
@@ -66,6 +69,35 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
         }
     }
 
+    private void RemoveCrimeSceneEvents()
+    {
+        var accidentSites = _accicentSiteQuery
+            .ToEntityArray(Allocator.Temp);
+        foreach (var entity in accidentSites)
+        {
+            var accidentSite = EntityManager.GetComponentData<AccidentSite>(entity);
+            if ((accidentSite.m_Flags & AccidentSiteFlags.CrimeScene) == 0)
+            {
+                continue;
+            }
+
+            var mEvent = accidentSite.m_Event;
+            var policeRequest = accidentSite.m_PoliceRequest;
+
+            EntityManager.RemoveComponent<AccidentSite>(entity);
+
+            if (mEvent != Entity.Null)
+            {
+                EntityManager.AddComponent<Deleted>(mEvent);
+            }
+
+            if (policeRequest != Entity.Null)
+            {
+                EntityManager.AddComponent<Deleted>(policeRequest);
+            }
+        }
+    }
+
     protected override void OnCreate()
     {
         base.OnCreate();
@@ -85,7 +117,14 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
             ComponentType.Exclude<Temp>()
         );
 
+        _accicentSiteQuery = GetEntityQuery(
+            ComponentType.ReadWrite<AccidentSite>(),
+            ComponentType.Exclude<Deleted>(),
+            ComponentType.Exclude<Temp>()
+        );
+
         RequireForUpdate(_policeConfigurationQuery);
         RequireForUpdate(_notificationsQuery);
+        RequireForUpdate(_accicentSiteQuery);
     }
 }
