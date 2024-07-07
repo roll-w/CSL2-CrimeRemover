@@ -35,6 +35,15 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
      */
     public bool EnableCrimeRemover { get; set; } = true;
 
+    public bool IsDisabled()
+    {
+        return !EnableCrimeRemover;
+    }
+
+    [SettingsUISection(Experimental)]
+    [SettingsUIDisableByCondition(typeof(CrimeSetting), nameof(IsDisabled))]
+    public bool RemoveCriminals { get; set; } = true;
+
     /**
      * Set the global buildings crime percentage
      *

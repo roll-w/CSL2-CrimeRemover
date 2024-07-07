@@ -70,6 +70,10 @@ namespace CrimeRemover
 
             updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAfter<CriminalRemoveSystem>(SystemUpdatePhase.Deserialize);
+            updateSystem.UpdateAfter<CriminalRemoveSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAfter<AddCriminalRemoveSystem>(SystemUpdatePhase.Deserialize);
+            updateSystem.UpdateAfter<AddCriminalRemoveSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
         }
