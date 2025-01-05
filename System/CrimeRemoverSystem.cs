@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Game;
 using Game.Buildings;
 using Game.Common;
@@ -96,7 +97,14 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         }
 
         crimeProducer.m_PatrolRequest = default;
-        EntityManager.AddComponent<Deleted>(rawRequest);
+        try
+        {
+            EntityManager.AddComponent<Deleted>(rawRequest);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
         return crimeProducer;
     }
 
