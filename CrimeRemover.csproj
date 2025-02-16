@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Title>Crime Remover</Title>
         <AssemblyTitle>$(Title)</AssemblyTitle>
-        <Description>A Cities: Skylines 2 mod.</Description>
+        <Description>Mod for Cities: Skylines 2 that removes crime from your city.</Description>
         <Authors>RollW</Authors>
         <Copyright>Copyright (c) 2024 RollW (github.com/Roll-W). All rights reserved.</Copyright>
         <Product>$(Title)</Product>
@@ -32,7 +32,11 @@
     <!--Imports must be after PropertyGroup block-->
     <Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props"/>
     <Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets"/>
-
+    
+    <Target Name="BuildUI" AfterTargets="AfterBuild">
+        <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)/UI" />
+    </Target>
+    
     <ItemGroup>
         <Reference Include="Game">
             <Private>false</Private>
@@ -47,6 +51,12 @@
             <Private>false</Private>
         </Reference>
         <Reference Include="Colossal.Localization">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.UI">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.UI.Binding">
             <Private>false</Private>
         </Reference>
         <Reference Include="Colossal.Mathematics">
