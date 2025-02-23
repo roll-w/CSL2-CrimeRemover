@@ -9,12 +9,34 @@
 	<LongDescription>
 # Crime Remover
 
-This is a mod for `Cities: Skylines 2` that removes crime from your city.
-
-But you could also make your city a "Vice City" through the mod settings.
+Mod for `Cities: Skylines 2` that removes crime from your city.
 
 This mod should work well with new or existing saves and be safe to
 remove from the game without any side effects.
+
+## Features
+
+- Remove crime from your city.
+- Prevent crime events from happening.
+- Disable police patrols.
+- Mark citizens as criminals.
+
+## Planned features
+
+- Send criminals to jail instantly.
+
+## Localizations
+
+- English
+- Simplified Chinese (简体中文)
+- Traditional Chinese (繁體中文)
+
+## Support
+
+If you have any problems during using this mod, please open
+an issue or discussion on GitHub. Or leave a comment on the
+forum post.
+
 	</LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />
@@ -22,20 +44,21 @@ remove from the game without any side effects.
 	<Screenshot Value="Properties/Thumbnail.png" />
 	<Screenshot Value="Properties/Screenshots/1.jpg" />
 	<Screenshot Value="Properties/Screenshots/2.jpg" />
+	<Screenshot Value="Properties/Screenshots/3.jpg" />
 	<!--Tag, can be set multiple times-->
 	<Tag Value="Code Mod" />
 	<!--Link to the forum post where the mod can be discussed-->
 	<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/crime-remover.1656233" />
 	<!--Version of the mod-->
-	<ModVersion Value="1.0.0" />
+	<ModVersion Value="1.1.0" />
 	<!--Recommended version of the base game to use the mod-->
-	<GameVersion Value="1.1.*" />
+	<GameVersion Value="1.*" />
 	<!--Dependency for the mod, can be set multiple times-->
 	<Dependency Id="" />
 	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 	<ChangeLog>
-- Feature: Support removes criminals.
-- Feature: Support removes crime scene events.
+- Feature: Support mark or unmark citizens as criminals.
+- Fix: A issue that causes the game to crash in some rare cases.
 	</ChangeLog>
 	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
 	<ExternalLink Type="github" Url="https://github.com/Roll-W/CSL2-CrimeRemover" />

@@ -1,14 +1,32 @@
 ﻿# Crime Remover
 
-This is a mod for `Cities: Skylines 2` that removes crime from your city.
-
-But you could also make your city a "Vice City" through the mod settings.
+Mod for `Cities: Skylines 2` that removes crime from your city.
 
 This mod should work well with new or existing saves and be safe to
 remove from the game without any side effects.
 
-If you have any problems during using this mod, please open an issue or discussion
-on GitHub.
+## Features
+
+- Remove crime from your city, or set crime rate to a specific value.
+- Prevent crime events from happening.
+- Disable police patrols.
+- Mark citizens as criminals.
+
+## Planned features
+
+- Send criminals to jail instantly.
+
+## Localizations
+
+- English
+- Simplified Chinese (简体中文)
+- Traditional Chinese (繁體中文)
+
+## Support
+
+If you have any problems during using this mod, please open
+an issue or discussion on GitHub. Or leave a comment on the
+forum post.
 
 ## License
 
