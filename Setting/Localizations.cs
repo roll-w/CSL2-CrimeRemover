@@ -48,9 +48,10 @@ namespace CrimeRemover.Setting
                 .AddTranslation(LocaleCode.ZhHans, "移除罪犯")
                 .AddTranslation(LocaleCode.ZhHant, "移除罪犯"),
             new Translation("Options.OPTION_DESCRIPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.RemoveCriminals]")
-                .AddTranslation(LocaleCode.EnUs, "When enabled, all criminals will be continuously removed.")
-                .AddTranslation(LocaleCode.ZhHans, "启用后，将持续移除所有罪犯。")
-                .AddTranslation(LocaleCode.ZhHant, "啟用後，將持續移除所有罪犯。"),
+                .AddTranslation(LocaleCode.EnUs, "When enabled, all criminals will be continuously removed. " +
+                                                 "Manually marked criminals will not be removed.")
+                .AddTranslation(LocaleCode.ZhHans, "启用后，将持续移除所有罪犯。被手动标记的罪犯不会被移除。")
+                .AddTranslation(LocaleCode.ZhHant, "啟用後，將持續移除所有罪犯。被手動標記的罪犯不會被移除。"),
             new Translation("Options.OPTION[CrimeRemover.CrimeRemover.Mod.CrimeSetting.CrimeBuildingPercentage]")
                 .AddTranslation(LocaleCode.EnUs, "Building Crime Percentage")
                 .AddTranslation(LocaleCode.ZhHans, "建筑犯罪百分比")
@@ -131,6 +132,30 @@ namespace CrimeRemover.Setting
                 .AddTranslation(LocaleCode.EnUs, "Experimental features, may cause game instability")
                 .AddTranslation(LocaleCode.ZhHans, "实验性功能，可能会导致游戏不稳定")
                 .AddTranslation(LocaleCode.ZhHant, "實驗性功能，可能會導致遊戲不穩定"),
+            new Translation("CrimeRemover.CRIME_REMOVER")
+                .AddTranslation(LocaleCode.EnUs, "Crime Remover")
+                .AddTranslation(LocaleCode.ZhHans, "犯罪移除器")
+                .AddTranslation(LocaleCode.ZhHant, "犯罪移除器"),
+            new Translation("CrimeRemover.MarkCriminal")
+                .AddTranslation(LocaleCode.EnUs, "Mark as Criminal")
+                .AddTranslation(LocaleCode.ZhHans, "标记为罪犯")
+                .AddTranslation(LocaleCode.ZhHant, "標記為罪犯"),
+            new Translation("CrimeRemover.MarkCriminal.DESC")
+                .AddTranslation(LocaleCode.EnUs,
+                    "Mark the currently selected citizen as a criminal, remove the current occupation and convert it to a criminal. " +
+                    "There is a certain delay in the conversion process.")
+                .AddTranslation(LocaleCode.ZhHans, "将当前选中的市民标记为罪犯，将移除当前职业并将其转为罪犯。转换过程存在一定的延迟。")
+                .AddTranslation(LocaleCode.ZhHant, "將當前選中的市民標記為罪犯，將移除當前職業並將其轉為罪犯。轉換過程存在一定的延遲。"),
+            new Translation("CrimeRemover.RemoveCriminal")
+                .AddTranslation(LocaleCode.EnUs, "Remove Criminal Mark")
+                .AddTranslation(LocaleCode.ZhHans, "移除罪犯标记")
+                .AddTranslation(LocaleCode.ZhHant, "移除罪犯標記"),
+            new Translation("CrimeRemover.RemoveCriminal.DESC")
+                .AddTranslation(LocaleCode.EnUs,
+                    "Remove the criminal mark of the currently selected citizen, restore it to a normal citizen," +
+                    " but the original occupation will not be restored.")
+                .AddTranslation(LocaleCode.ZhHans, "移除当前选中市民的罪犯标记，将其恢复为普通市民，但原有职业不会恢复。")
+                .AddTranslation(LocaleCode.ZhHant, "移除當前選中市民的罪犯標記，將其恢復為普通市民，但原有職業不會恢復。"),
         ];
 
         public static void LoadTranslations()

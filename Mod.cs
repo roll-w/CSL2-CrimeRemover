@@ -34,7 +34,7 @@ namespace CrimeRemover
     {
         public const string Name = "RollW_CrimeRemover";
         private static readonly ILog LOG = LogManager.GetLogger($"{Name}.Mod")
-            .SetShowsErrorsInUI(true);
+            .SetShowsErrorsInUI(false);
 
         public static CrimeSetting Setting { get; private set; }
 
@@ -76,6 +76,11 @@ namespace CrimeRemover
             updateSystem.UpdateAfter<AddCriminalRemoveSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
+
+            updateSystem.UpdateAfter<MarkCriminalSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAfter<PoliceRequestSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAt<UIBindingSystem>(SystemUpdatePhase.UIUpdate);
+
         }
 
         public void OnDispose()

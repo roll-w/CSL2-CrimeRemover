@@ -18,49 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using Colossal.Serialization.Entities;
+using Unity.Entities;
 
-namespace CrimeRemover.Setting;
+namespace StationNaming.System;
 
-/**
- * Represents a translation
- */
-public readonly struct Translation(string key)
-{
-    public readonly string Key = key;
-    private readonly Dictionary<LocaleCode, string> _translations = new();
-
-    public Translation AddTranslation(LocaleCode locale, string translation)
-    {
-        _translations.Add(locale, translation);
-        return this;
-    }
-
-    public string GetTranslation(LocaleCode locale)
-    {
-        if (_translations.TryGetValue(locale, out var translation))
-        {
-            return translation;
-        }
-
-        return _translations.TryGetValue(LocaleCode.EnUs,
-            out var defaultTranslation)
-            ? defaultTranslation
-            : Key;
-    }
-
-    public static Dictionary<string, string> ToDictionary(
-        IEnumerable<Translation> translations,
-        LocaleCode code) => translations.ToDictionary(
-        translation => translation.Key,
-        translation => translation.GetTranslation(code)
-    );
-}
-
-public enum LocaleCode
-{
-    EnUs,
-    ZhHans,
-    ZhHant
-}
+public struct Selected : IComponentData, IEmptySerializable;

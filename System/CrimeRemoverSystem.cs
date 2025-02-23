@@ -101,7 +101,7 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         {
             EntityManager.AddComponent<Deleted>(rawRequest);
         }
-        catch (Exception e)
+        catch (Exception _)
         {
             // ignored
         }

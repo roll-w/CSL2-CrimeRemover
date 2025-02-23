@@ -45,6 +45,11 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
         foreach (var entity in addCriminals)
         {
+            if (EntityManager.HasComponent<CriminalMark>(entity))
+            {
+                continue;
+            }
+
             var addCriminal = EntityManager.GetComponentData<AddCriminal>(entity);
             var cEvent = addCriminal.m_Event;
 
@@ -60,6 +65,10 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
         foreach (var entity in crimes)
         {
+            if (EntityManager.HasComponent<CriminalMark>(entity))
+            {
+                continue;
+            }
             EntityManager.AddComponent<Deleted>(entity);
         }
     }
