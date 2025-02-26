@@ -23,6 +23,4 @@ using Unity.Entities;
 
 namespace CrimeRemover.System;
 
-public struct CriminalMark : IComponentData, IEmptySerializable
-{
-}
+public struct CriminalMark : IComponentData, IEmptySerializable { }

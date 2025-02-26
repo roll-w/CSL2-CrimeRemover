@@ -28,13 +28,13 @@ using Unity.Entities;
 
 namespace CrimeRemover.System;
 
-public sealed partial class CrimeRemoverSystem : GameSystemBase
+public sealed partial class CrimeAdjusterSystem : GameSystemBase
 {
     private EntityQuery _crimeProducersQuery;
 
     protected override void OnUpdate()
     {
-        if (!Mod.Setting.EnableCrimeRemover)
+        if (!Mod.Setting.EnableCrimeAdjuster)
         {
             return;
         }
@@ -69,14 +69,12 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
                 continue;
             }
 
-            if (crimeProducer.m_Crime <= 0)
+            if (crimePercentage <= 0 && crimeProducer.m_Crime > 0)
             {
-                continue;
+                crimeProducer.m_Crime = 0;
+                crimeProducer = CheckCrimePatrolRequest(crimeProducer);
+                EntityManager.SetComponentData(entity, crimeProducer);
             }
-
-            crimeProducer.m_Crime = 0;
-            crimeProducer = CheckCrimePatrolRequest(crimeProducer);
-            EntityManager.SetComponentData(entity, crimeProducer);
         }
     }
 

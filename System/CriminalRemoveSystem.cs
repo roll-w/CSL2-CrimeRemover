@@ -33,7 +33,7 @@ public sealed partial class CriminalRemoveSystem : GameSystemBase
 
     protected override void OnUpdate()
     {
-        if (!Mod.Setting.EnableCrimeRemover || !Mod.Setting.RemoveCriminals)
+        if (!Mod.Setting.EnableCrimeAdjuster || !Mod.Setting.RemoveCriminals)
         {
             return;
         }

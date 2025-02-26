@@ -32,8 +32,9 @@ namespace CrimeRemover
 {
     public class Mod : IMod
     {
-        public const string Name = "RollW_CrimeRemover";
-        private static readonly ILog LOG = LogManager.GetLogger($"{Name}.Mod")
+        public const string Name = "RollW_CrimeAdjuster";
+        private static readonly ILog LOG = LogManager
+            .GetLogger($"{Name}.Mod")
             .SetShowsErrorsInUI(false);
 
         public static CrimeSetting Setting { get; private set; }
@@ -53,8 +54,7 @@ namespace CrimeRemover
 
         private void SetupOnLoad(UpdateSystem updateSystem)
         {
-            if (GameManager.instance.modManager
-                .TryGetExecutableAsset(this, out var asset))
+            if (GameManager.instance.modManager.TryGetExecutableAsset(this, out var asset))
             {
                 LOG.Info($"Current mod asset at {asset.path}");
             }
@@ -62,25 +62,26 @@ namespace CrimeRemover
             Setting.RegisterInOptionsUI();
             Localizations.LoadTranslations();
 
-            AssetDatabase.global.LoadSettings(Name,
-                Setting, new CrimeSetting(this)
-            );
+            AssetDatabase.global.LoadSettings(Name, Setting, new CrimeSetting(this));
 
             LOG.Info($"Load settings: {Setting.ToJSONString()}");
 
-            updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.Deserialize);
-            updateSystem.UpdateAfter<CrimeNotificationRemoverSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAfter<CrimeNotificationAdjusterSystem>(
+                SystemUpdatePhase.Deserialize
+            );
+            updateSystem.UpdateAfter<CrimeNotificationAdjusterSystem>(
+                SystemUpdatePhase.GameSimulation
+            );
             updateSystem.UpdateAfter<CriminalRemoveSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<CriminalRemoveSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAfter<AddCriminalRemoveSystem>(SystemUpdatePhase.Deserialize);
             updateSystem.UpdateAfter<AddCriminalRemoveSystem>(SystemUpdatePhase.GameSimulation);
-            updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.Deserialize);
-            updateSystem.UpdateAfter<CrimeRemoverSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateAfter<CrimeAdjusterSystem>(SystemUpdatePhase.Deserialize);
+            updateSystem.UpdateAfter<CrimeAdjusterSystem>(SystemUpdatePhase.GameSimulation);
 
             updateSystem.UpdateAfter<MarkCriminalSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAfter<PoliceRequestSystem>(SystemUpdatePhase.GameSimulation);
             updateSystem.UpdateAt<UIBindingSystem>(SystemUpdatePhase.UIUpdate);
-
         }
 
         public void OnDispose()

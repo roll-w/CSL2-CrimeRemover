@@ -69,7 +69,7 @@ const MarkCriminalComponent = () => {
     return showCitizenPanel ? (<PanelSection>
         <div className="actions-section_X1x info-row_QQ9">
             <div className="left_RyE uppercase_f0y">
-                {translate(getTranslationKeyOf("CRIME_REMOVER"), "Crime Remover")}
+                {translate(getTranslationKeyOf("CRIME_ADJUSTER"), "Crime Adjuster")}
             </div>
             <Tooltip tooltip={
                 <div>
