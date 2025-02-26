@@ -35,8 +35,8 @@ public sealed partial class MarkCriminalSystem : GameSystemBase
 
     protected override void OnUpdate()
     {
-        var addCriminalMarks =
-            _addCriminalMarkQuery.ToEntityArray(Allocator.Temp);
+        var addCriminalMarks = _addCriminalMarkQuery.ToEntityArray(Allocator.Temp);
+
         foreach (var addCriminalMarkEntity in addCriminalMarks)
         {
             if (!EntityManager.Exists(addCriminalMarkEntity))
@@ -56,14 +56,14 @@ public sealed partial class MarkCriminalSystem : GameSystemBase
             {
                 m_Event = crimeEventEntity,
                 m_Target = addCriminalMarkEntity,
-                m_Flags = CriminalFlags.Robber | CriminalFlags.Planning
+                m_Flags = CriminalFlags.Robber | CriminalFlags.Planning,
             };
-            var targetElement = new TargetElement
-            {
-                m_Entity = addCriminalMarkEntity
-            };
+
+            var targetElement = new TargetElement { m_Entity = addCriminalMarkEntity };
+
             var dynamicBuffer = GetBuffer<TargetElement>(crimeEventEntity);
             dynamicBuffer.Add(targetElement);
+
             var criminal = new Criminal(crimeEventEntity, addCriminal.m_Flags);
             EntityManager.AddComponentData(crimeEventEntity, addCriminal);
             EntityManager.AddComponentData(addCriminalMarkEntity, criminal);
@@ -78,7 +78,8 @@ public sealed partial class MarkCriminalSystem : GameSystemBase
         }
     }
 
-    private DynamicBuffer<T> GetBuffer<T>(Entity entity) where T : unmanaged, IBufferElementData
+    private DynamicBuffer<T> GetBuffer<T>(Entity entity)
+        where T : unmanaged, IBufferElementData
     {
         return EntityManager.HasBuffer<T>(entity)
             ? EntityManager.GetBuffer<T>(entity)
@@ -88,18 +89,15 @@ public sealed partial class MarkCriminalSystem : GameSystemBase
     protected override void OnCreate()
     {
         base.OnCreate();
-        _addCriminalMarkQuery = GetEntityQuery(new EntityQueryDesc
-        {
-            All =
-            [
-                ComponentType.ReadWrite<AddCriminalMark>()
-            ],
-            None =
-            [
-                ComponentType.ReadOnly<CriminalMark>(),
-                ComponentType.ReadOnly<Deleted>()
-            ]
-        });
+
+        _addCriminalMarkQuery = GetEntityQuery(
+            new EntityQueryDesc
+            {
+                All = [ComponentType.ReadWrite<AddCriminalMark>()],
+                None = [ComponentType.ReadOnly<CriminalMark>(), ComponentType.ReadOnly<Deleted>()],
+            }
+        );
+
         _criminalEventArchetype = EntityManager.CreateArchetype(
             ComponentType.ReadWrite<Event>(),
             ComponentType.ReadWrite<AddCriminal>()

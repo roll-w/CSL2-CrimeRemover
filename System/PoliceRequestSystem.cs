@@ -37,9 +37,8 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
 
     protected override void OnUpdate()
     {
-        var policeRequestMarks = _policeRequestMarkQuery.ToEntityArray(
-            Allocator.Temp
-        );
+        var policeRequestMarks = _policeRequestMarkQuery.ToEntityArray(Allocator.Temp);
+
         foreach (var policeRequestMark in policeRequestMarks)
         {
             if (!EntityManager.Exists(policeRequestMark))
@@ -53,10 +52,7 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
                 {
                     UpdateCitizenFlag(policeRequestMark);
                 }
-                else
-                {
-                    // TODO
-                }
+                // else - TODO: Handle non-criminal citizens
             }
 
             // var policeEmergencyRequest = EntityManager.CreateEntity(_policeEmergencyRequestArchetype);
@@ -71,15 +67,15 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
             // EntityManager.AddComponentData(policeEmergencyRequest, new ServiceRequest(true));
             EntityManager.RemoveComponent<PoliceRequestMark>(policeRequestMark);
         }
-
-        //policeRequestMarks.Dispose();
     }
 
     private void UpdateCitizenFlag(Entity policeRequestMark)
     {
         var criminal = EntityManager.GetComponentData<Criminal>(policeRequestMark);
-        if ((criminal.m_Flags & CriminalFlags.Arrested) != 0
-            || (criminal.m_Flags & CriminalFlags.Prisoner) != 0)
+        if (
+            (criminal.m_Flags & CriminalFlags.Arrested) != 0
+            || (criminal.m_Flags & CriminalFlags.Prisoner) != 0
+        )
         {
             return;
         }
@@ -93,7 +89,8 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
 
         if (!EntityManager.HasComponent<Resident>(transportEntity))
         {
-            Mod.GetLogger().Info($"CurrentTransport {transportEntity} does not have Resident component.");
+            Mod.GetLogger()
+                .Info($"CurrentTransport {transportEntity} does not have Resident component.");
             return;
         }
 
@@ -127,7 +124,7 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
         {
             m_Purpose = Purpose.GoingToJail,
             m_Resource = Resource.NoResource,
-            m_Data = 0
+            m_Data = 0,
         };
         EntityManager.AddComponentData(policeRequestMark, travelPurpose);
     }
@@ -135,22 +132,21 @@ public sealed partial class PoliceRequestSystem : GameSystemBase
     protected override void OnCreate()
     {
         base.OnCreate();
+
         _policeEmergencyRequestArchetype = EntityManager.CreateArchetype(
             ComponentType.ReadWrite<ServiceRequest>(),
             ComponentType.ReadWrite<PoliceEmergencyRequest>(),
             ComponentType.ReadWrite<RequestGroup>()
         );
-        _policeRequestMarkQuery = GetEntityQuery(new EntityQueryDesc
-        {
-            All =
-            [
-                ComponentType.ReadWrite<PoliceRequestMark>()
-            ],
-            None =
-            [
-                ComponentType.ReadOnly<Deleted>()
-            ]
-        });
+
+        _policeRequestMarkQuery = GetEntityQuery(
+            new EntityQueryDesc
+            {
+                All = [ComponentType.ReadWrite<PoliceRequestMark>()],
+                None = [ComponentType.ReadOnly<Deleted>()],
+            }
+        );
+
         RequireForUpdate(_policeRequestMarkQuery);
     }
 }
