@@ -44,7 +44,7 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
         foreach (var entity in addCriminals)
         {
-            if (EntityManager.HasComponent<CriminalMark>(entity))
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
             {
                 continue;
             }
@@ -64,15 +64,12 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
         foreach (var entity in crimes)
         {
-            if (EntityManager.HasComponent<CriminalMark>(entity))
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
             {
                 continue;
             }
 
-            if (EntityManager.Exists(entity))
-            {
-                EntityManager.AddComponent<Deleted>(entity);
-            }
+            EntityManager.AddComponent<Deleted>(entity);
         }
     }
 
