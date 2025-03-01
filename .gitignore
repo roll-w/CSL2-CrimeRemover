@@ -5,3 +5,4 @@ riderModule.iml
 /_ReSharper.Caches/
 /.idea/
 /CrimeRemover.sln.DotSettings.user
+node_modules

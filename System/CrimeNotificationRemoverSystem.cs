@@ -30,7 +30,7 @@ using Unity.Entities;
 
 namespace CrimeRemover.System;
 
-public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
+public sealed partial class CrimeNotificationAdjusterSystem : GameSystemBase
 {
     private EntityQuery _policeConfigurationQuery;
     private EntityQuery _notificationsQuery;
@@ -103,7 +103,7 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
     {
         base.OnCreate();
 
-        Mod.GetLogger().Info("Setup CrimeNotificationRemoverSystem.");
+        Mod.GetLogger().Info("Setup CrimeNotificationAdjusterSystem.");
 
         _policeConfigurationQuery = GetEntityQuery(
             ComponentType.ReadOnly<PoliceConfigurationData>(),

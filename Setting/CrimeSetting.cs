@@ -31,13 +31,13 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
     private const string Experimental = "Experimental";
 
     /**
-     * Enable or disable the crime remover
+     * Enable or disable the crime adjuster
      */
-    public bool EnableCrimeRemover { get; set; } = true;
+    public bool EnableCrimeAdjuster { get; set; } = true;
 
     public bool IsDisabled()
     {
-        return !EnableCrimeRemover;
+        return !EnableCrimeAdjuster;
     }
 
     [SettingsUISection(Experimental)]
@@ -47,9 +47,9 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
     /**
      * Set the global buildings crime percentage
      *
-     * Must be between 0 and 100
+     * Values below 100 reduce crime, values above 100 increase crime
      */
-    [SettingsUISlider(max = 100, min = 0, step = 1)]
+    [SettingsUISlider(max = 300, min = 0, step = 5)]
     [SettingsUISection(Experimental)]
     public float CrimeBuildingPercentage { get; set; } = 0;
 
@@ -62,8 +62,10 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
 
     /**
      * The scale of the building crime percentage
+     *
+     * Values below 100 reduce crime, values above 100 increase crime
      */
-    [SettingsUISlider(max = 100, min = 0, step = 1)]
+    [SettingsUISlider(max = 500, min = 0, step = 5)]
     [SettingsUISection(Experimental)]
     public float CrimePercentage { get; set; } = 0;
 
@@ -85,17 +87,17 @@ public class CrimeSetting(IMod mod) : ModSetting(mod)
         {
             NotificationType.AlwaysRemove => true,
             NotificationType.NeverRemove => false,
-            NotificationType.OnlyEnable => EnableCrimeRemover,
+            NotificationType.OnlyEnable => EnableCrimeAdjuster,
             // if the building crime percentage is greater than 0,
             // then we will not remove the notification
-            NotificationType.OnlyPercentage => EnableCrimeRemover && CrimePercentage == 0,
-            _ => false
+            NotificationType.OnlyPercentage => EnableCrimeAdjuster && CrimePercentage == 0,
+            _ => false,
         };
     }
 
     public override void SetDefaults()
     {
-        EnableCrimeRemover = true;
+        EnableCrimeAdjuster = true;
         CrimeBuildingPercentage = 0;
         CrimePercentage = 0;
         MaxCrime = 25000;
