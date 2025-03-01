@@ -38,8 +38,7 @@ public sealed partial class CriminalRemoveSystem : GameSystemBase
             return;
         }
 
-        var criminals = _criminalQuery
-            .ToEntityArray(Allocator.Temp);
+        var criminals = _criminalQuery.ToEntityArray(Allocator.Temp);
 
         foreach (var entity in criminals)
         {
@@ -48,7 +47,7 @@ public sealed partial class CriminalRemoveSystem : GameSystemBase
 
             EntityManager.RemoveComponent<Criminal>(entity);
 
-            if (cEvent != Entity.Null)
+            if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
             {
                 EntityManager.AddComponent<Deleted>(cEvent);
             }

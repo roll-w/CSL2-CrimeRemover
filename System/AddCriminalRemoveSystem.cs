@@ -40,12 +40,11 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
             return;
         }
 
-        var addCriminals = _addCriminalQuery
-            .ToEntityArray(Allocator.Temp);
+        var addCriminals = _addCriminalQuery.ToEntityArray(Allocator.Temp);
 
         foreach (var entity in addCriminals)
         {
-            if (EntityManager.HasComponent<CriminalMark>(entity))
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
             {
                 continue;
             }
@@ -55,7 +54,7 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
             EntityManager.RemoveComponent<AddCriminal>(entity);
 
-            if (cEvent != Entity.Null)
+            if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
             {
                 EntityManager.AddComponent<Deleted>(cEvent);
             }
@@ -65,10 +64,11 @@ public sealed partial class AddCriminalRemoveSystem : GameSystemBase
 
         foreach (var entity in crimes)
         {
-            if (EntityManager.HasComponent<CriminalMark>(entity))
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
             {
                 continue;
             }
+
             EntityManager.AddComponent<Deleted>(entity);
         }
     }

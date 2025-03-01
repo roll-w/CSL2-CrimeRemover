@@ -46,14 +46,10 @@ public partial class UIBindingSystem : UISystemBase
     protected override void OnCreate()
     {
         base.OnCreate();
-        _selectedInfoUISystem = World.DefaultGameObjectInjectionWorld
-            .GetOrCreateSystemManaged<SelectedInfoUISystem>();
+        _selectedInfoUISystem =
+            World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SelectedInfoUISystem>();
 
-        AddBinding(new TriggerBinding<Entity>(
-            Mod.Name,
-            "setSelectedEntity",
-            SetSelectedEntity
-        ));
+        AddBinding(new TriggerBinding<Entity>(Mod.Name, "setSelectedEntity", SetSelectedEntity));
 
         AddBinding(
             _selectedEntityBinding = new ValueBinding<Entity>(
@@ -62,50 +58,37 @@ public partial class UIBindingSystem : UISystemBase
                 Entity.Null
             )
         );
-        AddBinding(new TriggerBinding<Entity>(
-            Mod.Name,
-            "markCriminal",
-            MarkCriminal
-        ));
-        AddBinding(new TriggerBinding<Entity>(
-            Mod.Name,
-            "removeCriminal",
-            RemoveCriminal
-        ));
-        AddUpdateBinding(new GetterValueBinding<bool>(
-            Mod.Name, "isCriminal",
-            IsCriminal
-        ));
-        AddUpdateBinding(new GetterValueBinding<bool>(
-            Mod.Name, "isShowCitizenPanel",
-            IsShowCitizenPanel
-        ));
-        AddBinding(new TriggerBinding<Entity>(
-            Mod.Name,
-            "callPolice",
-            CallPolice
-        ));
+
+        AddBinding(new TriggerBinding<Entity>(Mod.Name, "markCriminal", MarkCriminal));
+        AddBinding(new TriggerBinding<Entity>(Mod.Name, "removeCriminal", RemoveCriminal));
+        AddUpdateBinding(new GetterValueBinding<bool>(Mod.Name, "isCriminal", IsCriminal));
+        AddUpdateBinding(
+            new GetterValueBinding<bool>(Mod.Name, "isShowCitizenPanel", IsShowCitizenPanel)
+        );
+        AddBinding(new TriggerBinding<Entity>(Mod.Name, "callPolice", CallPolice));
     }
 
     internal void SetSelectedEntity(Entity entity)
     {
         if (_selectedEntity == entity && entity != Entity.Null && entity != default)
         {
-            if (!EntityManager.HasComponent<Selected>(entity))
+            if (!EntityManager.HasComponent<Selected>(entity) && EntityManager.Exists(entity))
             {
                 EntityManager.AddComponent<Selected>(entity);
             }
-
             return;
         }
 
-        if (_selectedEntity != Entity.Null &&
-            EntityManager.HasComponent<Selected>(_selectedEntity))
+        if (
+            _selectedEntity != Entity.Null
+            && EntityManager.HasComponent<Selected>(_selectedEntity)
+            && EntityManager.Exists(_selectedEntity)
+        )
         {
             EntityManager.RemoveComponent<Selected>(_selectedEntity);
         }
 
-        if (entity != Entity.Null || entity != default)
+        if ((entity != Entity.Null || entity != default) && EntityManager.Exists(entity))
         {
             EntityManager.AddComponent<Selected>(entity);
         }
@@ -120,19 +103,22 @@ public partial class UIBindingSystem : UISystemBase
             return;
         }
 
+        if (!EntityManager.Exists(entity))
+        {
+            return;
+        }
+
         if (!EntityManager.HasComponent<Citizen>(entity))
         {
             return;
         }
 
-        if (EntityManager.HasComponent<AddCriminalMark>(entity) ||
-            EntityManager.HasComponent<CriminalMark>(entity) ||
-            // EntityManager.HasComponent<CriminalMark>(resident.m_Citizen) ||
-            EntityManager.HasComponent<AddCriminal>(entity) ||
-            // EntityManager.HasComponent<AddCriminal>(resident.m_Citizen) ||
-            EntityManager.HasComponent<Criminal>(entity)
-            // EntityManager.HasComponent<Criminal>(resident.m_Citizen)
-           )
+        if (
+            EntityManager.HasComponent<AddCriminalMark>(entity)
+            || EntityManager.HasComponent<CriminalMark>(entity)
+            || EntityManager.HasComponent<AddCriminal>(entity)
+            || EntityManager.HasComponent<Criminal>(entity)
+        )
         {
             return;
         }
@@ -147,19 +133,33 @@ public partial class UIBindingSystem : UISystemBase
             return;
         }
 
+        if (!EntityManager.Exists(entity))
+        {
+            return;
+        }
+
         if (!EntityManager.HasComponent<Citizen>(entity))
         {
             return;
         }
 
-        if (!EntityManager.HasComponent<Criminal>(entity) &&
-            !EntityManager.HasComponent<CriminalMark>(entity))
+        if (
+            !EntityManager.HasComponent<Criminal>(entity)
+            && !EntityManager.HasComponent<CriminalMark>(entity)
+        )
         {
             return;
         }
 
-        EntityManager.RemoveComponent<CriminalMark>(entity);
-        EntityManager.RemoveComponent<Criminal>(entity);
+        if (EntityManager.HasComponent<CriminalMark>(entity))
+        {
+            EntityManager.RemoveComponent<CriminalMark>(entity);
+        }
+
+        if (EntityManager.HasComponent<Criminal>(entity))
+        {
+            EntityManager.RemoveComponent<Criminal>(entity);
+        }
     }
 
     internal bool IsCriminal()
@@ -172,8 +172,8 @@ public partial class UIBindingSystem : UISystemBase
             return false;
         }
 
-        return EntityManager.HasComponent<Criminal>(entity) ||
-               EntityManager.HasComponent<CriminalMark>(entity);
+        return EntityManager.HasComponent<Criminal>(entity)
+            || EntityManager.HasComponent<CriminalMark>(entity);
     }
 
     internal bool IsShowCitizenPanel()
@@ -196,11 +196,9 @@ public partial class UIBindingSystem : UISystemBase
             return;
         }
 
-        //if (!EntityManager.HasComponent<Citizen>(entity))
-        //{
-        //    return;
-        //}
-
-        EntityManager.AddComponent<PoliceRequestMark>(entity);
+        if (EntityManager.Exists(entity))
+        {
+            EntityManager.AddComponent<PoliceRequestMark>(entity);
+        }
     }
 }

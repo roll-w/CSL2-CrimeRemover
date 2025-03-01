@@ -42,18 +42,14 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         var maxCrime = Mod.Setting.MaxCrime;
         var buildingPercentage = Mod.Setting.CrimeBuildingPercentage;
         var crimePercentage = Mod.Setting.CrimePercentage;
-        // calculate the crime coefficient based on the percentage
         var crimeCoefficient = maxCrime * crimePercentage / 100;
 
-        var entities = _crimeProducersQuery
-            .ToEntityArray(Allocator.Temp);
-
+        var entities = _crimeProducersQuery.ToEntityArray(Allocator.Temp);
         var length = entities.Length;
 
         var wouldBeCrime = 0;
         if (buildingPercentage > 0)
         {
-            // calculate the number of buildings that would have crime
             wouldBeCrime = (int)(length * buildingPercentage / 100);
         }
 
@@ -61,6 +57,7 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         {
             var entity = entities[index];
             var crimeProducer = EntityManager.GetComponentData<CrimeProducer>(entity);
+
             if (index < wouldBeCrime)
             {
                 crimeProducer.m_Crime = crimeCoefficient;
@@ -80,10 +77,7 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         }
     }
 
-
-    private CrimeProducer CheckCrimePatrolRequest(
-        CrimeProducer crimeProducer,
-        bool remove = true)
+    private CrimeProducer CheckCrimePatrolRequest(CrimeProducer crimeProducer, bool remove = true)
     {
         if (!remove)
         {
@@ -99,12 +93,16 @@ public sealed partial class CrimeRemoverSystem : GameSystemBase
         crimeProducer.m_PatrolRequest = default;
         try
         {
-            EntityManager.AddComponent<Deleted>(rawRequest);
+            if (EntityManager.Exists(rawRequest))
+            {
+                EntityManager.AddComponent<Deleted>(rawRequest);
+            }
         }
-        catch (Exception _)
+        catch (Exception)
         {
             // ignored
         }
+
         return crimeProducer;
     }
 

@@ -45,25 +45,26 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
 
         RemoveCrimeSceneEvents();
 
-        var policeConfigurations = _policeConfigurationQuery
-            .ToComponentDataArray<PoliceConfigurationData>(Allocator.Temp);
+        var policeConfigurations =
+            _policeConfigurationQuery.ToComponentDataArray<PoliceConfigurationData>(Allocator.Temp);
+
         if (policeConfigurations.Length == 0)
         {
             return;
         }
 
-        // it should only have one configuration
+        // It should only have one configuration
         var policeConfiguration = policeConfigurations[0];
         var crimeScenePrefab = policeConfiguration.m_CrimeSceneNotificationPrefab;
 
-        var entities = _notificationsQuery
-            .ToEntityArray(Allocator.Temp);
+        var entities = _notificationsQuery.ToEntityArray(Allocator.Temp);
 
-        foreach (var entity in from entity in entities
-                 let prefabRef = EntityManager.GetComponentData<PrefabRef>(entity)
-                 where prefabRef == crimeScenePrefab ||
-                       prefabRef.m_Prefab == crimeScenePrefab
-                 select entity)
+        foreach (
+            var entity in from entity in entities
+            let prefabRef = EntityManager.GetComponentData<PrefabRef>(entity)
+            where prefabRef == crimeScenePrefab || prefabRef.m_Prefab == crimeScenePrefab
+            select entity
+        )
         {
             EntityManager.AddComponent<Deleted>(entity);
         }
@@ -71,8 +72,8 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
 
     private void RemoveCrimeSceneEvents()
     {
-        var accidentSites = _accicentSiteQuery
-            .ToEntityArray(Allocator.Temp);
+        var accidentSites = _accicentSiteQuery.ToEntityArray(Allocator.Temp);
+
         foreach (var entity in accidentSites)
         {
             var accidentSite = EntityManager.GetComponentData<AccidentSite>(entity);
@@ -86,12 +87,12 @@ public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
 
             EntityManager.RemoveComponent<AccidentSite>(entity);
 
-            if (mEvent != Entity.Null)
+            if (mEvent != Entity.Null && EntityManager.Exists(mEvent))
             {
                 EntityManager.AddComponent<Deleted>(mEvent);
             }
 
-            if (policeRequest != Entity.Null)
+            if (policeRequest != Entity.Null && EntityManager.Exists(policeRequest))
             {
                 EntityManager.AddComponent<Deleted>(policeRequest);
             }
