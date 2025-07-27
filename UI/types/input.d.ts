@@ -210,16 +210,17 @@ declare module "cs2/input" {
   	limits?: FocusLimits;
   	onRefocus?: (controller: MultiChildFocusController, lastElement: FocusController | null) => UniqueFocusKey | null;
   	onChange?: (key: UniqueFocusKey | null) => void;
+  	onFocused?: (focused: boolean) => void;
   	allowFocusExit?: boolean;
   	forceFocus?: UniqueFocusKey | null;
   	debugName?: string;
-  	allowLooping?: boolean;
+  	allowLooping?: boolean | "x" | "y";
   	jumpSections?: boolean;
   }
   /**
    * Automatic navigation in lists, grids and forms.
    */
-  export export const AutoNavigationScope: ({ focusKey, initialFocused, direction, activation, limits, children, onChange, onRefocus, allowFocusExit, forceFocus, debugName, allowLooping, jumpSections }: React$1.PropsWithChildren<AutoNavigationScopeProps>) => JSX.Element;
+  export export const AutoNavigationScope: ({ onRefocus, onChange, allowFocusExit, allowLooping, debugName, focusKey, forceFocus, initialFocused, ...props }: React$1.PropsWithChildren<AutoNavigationScopeProps>) => JSX.Element;
   export interface FocusBoundaryProps {
   	disabled?: boolean;
   	onFocusChange?: FocusCallback;
@@ -291,7 +292,8 @@ declare module "cs2/input" {
   	openPanel = "open-panel",
   	closePanel = "close-panel",
   	openMenu = "open-menu",
-  	closeMenu = "close-menu"
+  	closeMenu = "close-menu",
+  	clickDisableButton = "click-disable-button"
   }
   export interface PassiveFocusDivProps extends React$1.HTMLAttributes<HTMLDivElement> {
   	onFocusChange?: (focused: boolean) => void;
@@ -363,10 +365,11 @@ declare module "cs2/input" {
   	direction?: NavigationDirection;
   	activation?: FocusActivation;
   	limits?: FocusLimits;
+  	onFocused?: (focused: boolean) => void;
   	onChange: (key: UniqueFocusKey | null) => void;
   	onRefocus?: (controller: MultiChildFocusController, lastElement: FocusController | null) => UniqueFocusKey | null;
   	allowFocusExit?: boolean;
-  	allowLooping?: boolean;
+  	allowLooping?: boolean | "x" | "y";
   	jumpSections?: boolean;
   }
   /**
@@ -378,7 +381,7 @@ declare module "cs2/input" {
    *
    * Optionally, a `focusKey` for the component itself can be set.
    */
-  export export const NavigationScope: ({ focusKey, debugName, focused, direction, activation, limits, children, onChange, onRefocus, allowFocusExit, allowLooping, jumpSections, }: React$1.PropsWithChildren<NavigationScopeProps>) => JSX.Element;
+  export export const NavigationScope: ({ focusKey, debugName, focused, direction, activation, limits, children, onFocused, onChange, onRefocus, allowFocusExit, allowLooping, jumpSections, }: React$1.PropsWithChildren<NavigationScopeProps>) => JSX.Element;
   export type RefocusHandler = (focusController: MultiChildFocusController, lastElement: FocusController | null) => UniqueFocusKey | null;
   export export const refocusClosestKeyIfNoFocus: RefocusHandler;
   export export const refocusClosestKey: RefocusHandler;
@@ -395,6 +398,7 @@ declare module "cs2/input" {
   	"Change Tool Option": Action1D;
   	"Change Value": Action1D;
   	"Change Line Schedule": Action1D;
+  	"Select Popup Button": Action1D;
   	"Move Vertical": Action1D;
   	"Switch Radio Station": Action1D;
   	"Scroll Vertical": Action1D;
@@ -404,6 +408,7 @@ declare module "cs2/input" {
   	"Select Chirp Sender": Action;
   	"Save Game": Action;
   	"Overwrite Save": Action;
+  	"Confirm": Action;
   	"Expand Group": Action;
   	"Collapse Group": Action;
   	"Select Route": Action;
@@ -437,6 +442,7 @@ declare module "cs2/input" {
   	"Change Time Scale": Action1D;
   	"Switch Page": Action1D;
   	"Default Tool": Action;
+  	"Default Tool UI": Action;
   	"Tool Options": Action;
   	"Switch Toolmode": Action;
   	"Toggle Snapping": Action;
@@ -501,6 +507,7 @@ declare module "cs2/input" {
   	"Select Directory": Action;
   	"Search Options": Action;
   	"Clear Search": Action;
+  	"Credit Speed": Action1D;
   	"Debug UI": Action;
   	"Debug Prefab Tool": Action;
   	"Debug Change Field": Action1D;
