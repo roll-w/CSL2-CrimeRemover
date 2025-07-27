@@ -24,181 +24,181 @@ using Game.Citizens;
 using Game.Events;
 using Game.UI;
 using Game.UI.InGame;
-using StationNaming.System;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public partial class UIBindingSystem : UISystemBase
+namespace CrimeRemover.System
 {
-    private Entity _selectedEntity;
-    private SelectedInfoUISystem _selectedInfoUISystem;
-    private ValueBinding<Entity> _selectedEntityBinding;
-
-    public override GameMode gameMode => GameMode.Game;
-
-    protected override void OnUpdate()
+    public partial class UIBindingSystem : UISystemBase
     {
-        base.OnUpdate();
-        _selectedEntityBinding.Update(_selectedInfoUISystem.selectedEntity);
-    }
+        private Entity _selectedEntity;
+        private SelectedInfoUISystem _selectedInfoUISystem;
+        private ValueBinding<Entity> _selectedEntityBinding;
 
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-        _selectedInfoUISystem =
-            World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SelectedInfoUISystem>();
+        public override GameMode gameMode => GameMode.Game;
 
-        AddBinding(new TriggerBinding<Entity>(Mod.Name, "setSelectedEntity", SetSelectedEntity));
-
-        AddBinding(
-            _selectedEntityBinding = new ValueBinding<Entity>(
-                Mod.Name,
-                "selectedEntity",
-                Entity.Null
-            )
-        );
-
-        AddBinding(new TriggerBinding<Entity>(Mod.Name, "markCriminal", MarkCriminal));
-        AddBinding(new TriggerBinding<Entity>(Mod.Name, "removeCriminal", RemoveCriminal));
-        AddUpdateBinding(new GetterValueBinding<bool>(Mod.Name, "isCriminal", IsCriminal));
-        AddUpdateBinding(
-            new GetterValueBinding<bool>(Mod.Name, "isShowCitizenPanel", IsShowCitizenPanel)
-        );
-        AddBinding(new TriggerBinding<Entity>(Mod.Name, "callPolice", CallPolice));
-    }
-
-    internal void SetSelectedEntity(Entity entity)
-    {
-        if (_selectedEntity == entity && entity != Entity.Null && entity != default)
+        protected override void OnUpdate()
         {
-            if (!EntityManager.HasComponent<Selected>(entity) && EntityManager.Exists(entity))
+            base.OnUpdate();
+            _selectedEntityBinding.Update(_selectedInfoUISystem.selectedEntity);
+        }
+
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            _selectedInfoUISystem =
+                World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SelectedInfoUISystem>();
+
+            AddBinding(new TriggerBinding<Entity>(Mod.Name, "setSelectedEntity", SetSelectedEntity));
+
+            AddBinding(
+                _selectedEntityBinding = new ValueBinding<Entity>(
+                    Mod.Name,
+                    "selectedEntity",
+                    Entity.Null
+                )
+            );
+
+            AddBinding(new TriggerBinding<Entity>(Mod.Name, "markCriminal", MarkCriminal));
+            AddBinding(new TriggerBinding<Entity>(Mod.Name, "removeCriminal", RemoveCriminal));
+            AddUpdateBinding(new GetterValueBinding<bool>(Mod.Name, "isCriminal", IsCriminal));
+            AddUpdateBinding(
+                new GetterValueBinding<bool>(Mod.Name, "isShowCitizenPanel", IsShowCitizenPanel)
+            );
+            AddBinding(new TriggerBinding<Entity>(Mod.Name, "callPolice", CallPolice));
+        }
+
+        internal void SetSelectedEntity(Entity entity)
+        {
+            if (_selectedEntity == entity && entity != Entity.Null && entity != default)
+            {
+                if (!EntityManager.HasComponent<Selected>(entity) && EntityManager.Exists(entity))
+                {
+                    EntityManager.AddComponent<Selected>(entity);
+                }
+                return;
+            }
+
+            if (
+                _selectedEntity != Entity.Null
+                && EntityManager.HasComponent<Selected>(_selectedEntity)
+                && EntityManager.Exists(_selectedEntity)
+            )
+            {
+                EntityManager.RemoveComponent<Selected>(_selectedEntity);
+            }
+
+            if ((entity != Entity.Null || entity != default) && EntityManager.Exists(entity))
             {
                 EntityManager.AddComponent<Selected>(entity);
             }
-            return;
+
+            _selectedEntity = entity;
         }
 
-        if (
-            _selectedEntity != Entity.Null
-            && EntityManager.HasComponent<Selected>(_selectedEntity)
-            && EntityManager.Exists(_selectedEntity)
-        )
+        internal void MarkCriminal(Entity entity)
         {
-            EntityManager.RemoveComponent<Selected>(_selectedEntity);
+            if (entity == Entity.Null || entity == default)
+            {
+                return;
+            }
+
+            if (!EntityManager.Exists(entity))
+            {
+                return;
+            }
+
+            if (!EntityManager.HasComponent<Citizen>(entity))
+            {
+                return;
+            }
+
+            if (
+                EntityManager.HasComponent<AddCriminalMark>(entity)
+                || EntityManager.HasComponent<CriminalMark>(entity)
+                || EntityManager.HasComponent<AddCriminal>(entity)
+                || EntityManager.HasComponent<Criminal>(entity)
+            )
+            {
+                return;
+            }
+
+            EntityManager.AddComponent<AddCriminalMark>(entity);
         }
 
-        if ((entity != Entity.Null || entity != default) && EntityManager.Exists(entity))
+        internal void RemoveCriminal(Entity entity)
         {
-            EntityManager.AddComponent<Selected>(entity);
+            if (entity == Entity.Null || entity == default)
+            {
+                return;
+            }
+
+            if (!EntityManager.Exists(entity))
+            {
+                return;
+            }
+
+            if (!EntityManager.HasComponent<Citizen>(entity))
+            {
+                return;
+            }
+
+            if (
+                !EntityManager.HasComponent<Criminal>(entity)
+                && !EntityManager.HasComponent<CriminalMark>(entity)
+            )
+            {
+                return;
+            }
+
+            if (EntityManager.HasComponent<CriminalMark>(entity))
+            {
+                EntityManager.RemoveComponent<CriminalMark>(entity);
+            }
+
+            if (EntityManager.HasComponent<Criminal>(entity))
+            {
+                EntityManager.RemoveComponent<Criminal>(entity);
+            }
         }
 
-        _selectedEntity = entity;
-    }
-
-    internal void MarkCriminal(Entity entity)
-    {
-        if (entity == Entity.Null || entity == default)
+        internal bool IsCriminal()
         {
-            return;
+            var entity = _selectedInfoUISystem.selectedEntity;
+            SetSelectedEntity(entity);
+
+            if (entity == Entity.Null || entity == default)
+            {
+                return false;
+            }
+
+            return EntityManager.HasComponent<Criminal>(entity)
+                   || EntityManager.HasComponent<CriminalMark>(entity);
         }
 
-        if (!EntityManager.Exists(entity))
+        internal bool IsShowCitizenPanel()
         {
-            return;
+            var entity = _selectedInfoUISystem.selectedEntity;
+            SetSelectedEntity(entity);
+
+            if (entity == Entity.Null || entity == default)
+            {
+                return false;
+            }
+
+            return EntityManager.HasComponent<Citizen>(entity);
         }
 
-        if (!EntityManager.HasComponent<Citizen>(entity))
+        internal void CallPolice(Entity entity)
         {
-            return;
-        }
+            if (entity == Entity.Null || entity == default)
+            {
+                return;
+            }
 
-        if (
-            EntityManager.HasComponent<AddCriminalMark>(entity)
-            || EntityManager.HasComponent<CriminalMark>(entity)
-            || EntityManager.HasComponent<AddCriminal>(entity)
-            || EntityManager.HasComponent<Criminal>(entity)
-        )
-        {
-            return;
-        }
-
-        EntityManager.AddComponent<AddCriminalMark>(entity);
-    }
-
-    internal void RemoveCriminal(Entity entity)
-    {
-        if (entity == Entity.Null || entity == default)
-        {
-            return;
-        }
-
-        if (!EntityManager.Exists(entity))
-        {
-            return;
-        }
-
-        if (!EntityManager.HasComponent<Citizen>(entity))
-        {
-            return;
-        }
-
-        if (
-            !EntityManager.HasComponent<Criminal>(entity)
-            && !EntityManager.HasComponent<CriminalMark>(entity)
-        )
-        {
-            return;
-        }
-
-        if (EntityManager.HasComponent<CriminalMark>(entity))
-        {
-            EntityManager.RemoveComponent<CriminalMark>(entity);
-        }
-
-        if (EntityManager.HasComponent<Criminal>(entity))
-        {
-            EntityManager.RemoveComponent<Criminal>(entity);
-        }
-    }
-
-    internal bool IsCriminal()
-    {
-        var entity = _selectedInfoUISystem.selectedEntity;
-        SetSelectedEntity(entity);
-
-        if (entity == Entity.Null || entity == default)
-        {
-            return false;
-        }
-
-        return EntityManager.HasComponent<Criminal>(entity)
-            || EntityManager.HasComponent<CriminalMark>(entity);
-    }
-
-    internal bool IsShowCitizenPanel()
-    {
-        var entity = _selectedInfoUISystem.selectedEntity;
-        SetSelectedEntity(entity);
-
-        if (entity == Entity.Null || entity == default)
-        {
-            return false;
-        }
-
-        return EntityManager.HasComponent<Citizen>(entity);
-    }
-
-    internal void CallPolice(Entity entity)
-    {
-        if (entity == Entity.Null || entity == default)
-        {
-            return;
-        }
-
-        if (EntityManager.Exists(entity))
-        {
-            EntityManager.AddComponent<PoliceRequestMark>(entity);
+            if (EntityManager.Exists(entity))
+            {
+                EntityManager.AddComponent<PoliceRequestMark>(entity);
+            }
         }
     }
 }

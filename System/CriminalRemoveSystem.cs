@@ -25,47 +25,48 @@ using Game.Tools;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public sealed partial class CriminalRemoveSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityQuery _criminalQuery;
-
-    protected override void OnUpdate()
+    public sealed partial class CriminalRemoveSystem : GameSystemBase
     {
-        if (!Mod.Setting.EnableCrimeRemover || !Mod.Setting.RemoveCriminals)
+        private EntityQuery _criminalQuery;
+
+        protected override void OnUpdate()
         {
-            return;
-        }
-
-        var criminals = _criminalQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (var entity in criminals)
-        {
-            var criminal = EntityManager.GetComponentData<Criminal>(entity);
-            var cEvent = criminal.m_Event;
-
-            EntityManager.RemoveComponent<Criminal>(entity);
-
-            if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
+            if (!Mod.Setting.EnableCrimeRemover || !Mod.Setting.RemoveCriminals)
             {
-                EntityManager.AddComponent<Deleted>(cEvent);
+                return;
+            }
+
+            var criminals = _criminalQuery.ToEntityArray(Allocator.Temp);
+
+            foreach (var entity in criminals)
+            {
+                var criminal = EntityManager.GetComponentData<Criminal>(entity);
+                var cEvent = criminal.m_Event;
+
+                EntityManager.RemoveComponent<Criminal>(entity);
+
+                if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
+                {
+                    EntityManager.AddComponent<Deleted>(cEvent);
+                }
             }
         }
-    }
 
-    protected override void OnCreate()
-    {
-        base.OnCreate();
+        protected override void OnCreate()
+        {
+            base.OnCreate();
 
-        Mod.GetLogger().Info("Setup CriminalRemoveSystem.");
+            Mod.GetLogger().Info("Setup CriminalRemoveSystem.");
 
-        _criminalQuery = GetEntityQuery(
-            ComponentType.ReadWrite<Criminal>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
+            _criminalQuery = GetEntityQuery(
+                ComponentType.ReadWrite<Criminal>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
 
-        RequireForUpdate(_criminalQuery);
+            RequireForUpdate(_criminalQuery);
+        }
     }
 }

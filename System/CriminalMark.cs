@@ -21,8 +21,9 @@
 using Colossal.Serialization.Entities;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public struct CriminalMark : IComponentData, IEmptySerializable
+namespace CrimeRemover.System
 {
+    public struct CriminalMark : IComponentData, IEmptySerializable
+    {
+    }
 }

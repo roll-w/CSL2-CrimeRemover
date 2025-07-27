@@ -26,72 +26,73 @@ using Game.Tools;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public sealed partial class AddCriminalRemoveSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityQuery _crimeQuery;
-    private EntityQuery _addCriminalQuery;
-
-    protected override void OnUpdate()
+    public sealed partial class AddCriminalRemoveSystem : GameSystemBase
     {
-        if (!Mod.Setting.EnableCrimeRemover || !Mod.Setting.RemoveCriminals)
-        {
-            return;
-        }
+        private EntityQuery _crimeQuery;
+        private EntityQuery _addCriminalQuery;
 
-        var addCriminals = _addCriminalQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (var entity in addCriminals)
+        protected override void OnUpdate()
         {
-            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
+            if (!Mod.Setting.EnableCrimeRemover || !Mod.Setting.RemoveCriminals)
             {
-                continue;
+                return;
             }
 
-            var addCriminal = EntityManager.GetComponentData<AddCriminal>(entity);
-            var cEvent = addCriminal.m_Event;
+            var addCriminals = _addCriminalQuery.ToEntityArray(Allocator.Temp);
 
-            EntityManager.RemoveComponent<AddCriminal>(entity);
-
-            if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
+            foreach (var entity in addCriminals)
             {
-                EntityManager.AddComponent<Deleted>(cEvent);
+                if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
+                {
+                    continue;
+                }
+
+                var addCriminal = EntityManager.GetComponentData<AddCriminal>(entity);
+                var cEvent = addCriminal.m_Event;
+
+                EntityManager.RemoveComponent<AddCriminal>(entity);
+
+                if (cEvent != Entity.Null && EntityManager.Exists(cEvent))
+                {
+                    EntityManager.AddComponent<Deleted>(cEvent);
+                }
+            }
+
+            var crimes = _crimeQuery.ToEntityArray(Allocator.Temp);
+
+            foreach (var entity in crimes)
+            {
+                if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
+                {
+                    continue;
+                }
+
+                EntityManager.AddComponent<Deleted>(entity);
             }
         }
 
-        var crimes = _crimeQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (var entity in crimes)
+        protected override void OnCreate()
         {
-            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<CriminalMark>(entity))
-            {
-                continue;
-            }
+            base.OnCreate();
 
-            EntityManager.AddComponent<Deleted>(entity);
+            Mod.GetLogger().Info("Setup AddCriminalRemoveSystem.");
+
+            _addCriminalQuery = GetEntityQuery(
+                ComponentType.ReadOnly<AddCriminal>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            _crimeQuery = GetEntityQuery(
+                ComponentType.ReadOnly<Crime>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            RequireForUpdate(_addCriminalQuery);
+            RequireForUpdate(_crimeQuery);
         }
-    }
-
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-
-        Mod.GetLogger().Info("Setup AddCriminalRemoveSystem.");
-
-        _addCriminalQuery = GetEntityQuery(
-            ComponentType.ReadOnly<AddCriminal>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
-
-        _crimeQuery = GetEntityQuery(
-            ComponentType.ReadOnly<Crime>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
-
-        RequireForUpdate(_addCriminalQuery);
-        RequireForUpdate(_crimeQuery);
     }
 }

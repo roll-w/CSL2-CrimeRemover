@@ -18,29 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace CrimeRemover.Setting;
-
-public enum NotificationType
+namespace CrimeRemover.Setting
 {
-    /**
-     * Always remove the notification, regardless of whether
-     * the mod is enabled or not.
-     */
-    AlwaysRemove,
+    public enum NotificationType
+    {
+        /**
+         * Always remove the notification, regardless of whether
+         * the mod is enabled or not.
+         */
+        AlwaysRemove,
 
-    /**
-     * Never remove the notification.
-     */
-    NeverRemove,
+        /**
+         * Never remove the notification.
+         */
+        NeverRemove,
 
-    /**
-     * Only remove the notification when the mod is enabled.
-     */
-    OnlyEnable,
+        /**
+         * Only remove the notification when the mod is enabled.
+         */
+        OnlyEnable,
 
-    /**
-     * Only remove the notification when the mod is enabled
-     * and the building crime percentage is zero.
-     */
-    OnlyPercentage
+        /**
+         * Only remove the notification when the mod is enabled
+         * and the building crime percentage is zero.
+         */
+        OnlyPercentage
+    }
 }

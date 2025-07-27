@@ -23,130 +23,130 @@ using Game.Citizens;
 using Game.Common;
 using Game.Creatures;
 using Game.Economy;
-using Game.Pathfind;
 using Game.Simulation;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public sealed partial class PoliceRequestSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityArchetype _policeEmergencyRequestArchetype;
-    private EntityQuery _policeRequestMarkQuery;
-
-    protected override void OnUpdate()
+    public sealed partial class PoliceRequestSystem : GameSystemBase
     {
-        var policeRequestMarks = _policeRequestMarkQuery.ToEntityArray(Allocator.Temp);
+        private EntityArchetype _policeEmergencyRequestArchetype;
+        private EntityQuery _policeRequestMarkQuery;
 
-        foreach (var policeRequestMark in policeRequestMarks)
+        protected override void OnUpdate()
         {
-            if (!EntityManager.Exists(policeRequestMark))
-            {
-                continue;
-            }
+            var policeRequestMarks = _policeRequestMarkQuery.ToEntityArray(Allocator.Temp);
 
-            if (EntityManager.HasComponent<Citizen>(policeRequestMark))
+            foreach (var policeRequestMark in policeRequestMarks)
             {
-                if (EntityManager.HasComponent<Criminal>(policeRequestMark))
+                if (!EntityManager.Exists(policeRequestMark))
                 {
-                    UpdateCitizenFlag(policeRequestMark);
+                    continue;
                 }
-                // else - TODO: Handle non-criminal citizens
+
+                if (EntityManager.HasComponent<Citizen>(policeRequestMark))
+                {
+                    if (EntityManager.HasComponent<Criminal>(policeRequestMark))
+                    {
+                        UpdateCitizenFlag(policeRequestMark);
+                    }
+                    // else - TODO: Handle non-criminal citizens
+                }
+
+                // var policeEmergencyRequest = EntityManager.CreateEntity(_policeEmergencyRequestArchetype);
+                // EntityManager.AddComponentData(
+                //     policeEmergencyRequest,
+                //     new PoliceEmergencyRequest(
+                //         policeRequestMark,
+                //         policeRequestMark,
+                //         4f, PolicePurpose.Emergency)
+                // );
+                // EntityManager.AddComponentData(policeEmergencyRequest, new RequestGroup(4U));
+                // EntityManager.AddComponentData(policeEmergencyRequest, new ServiceRequest(true));
+                EntityManager.RemoveComponent<PoliceRequestMark>(policeRequestMark);
             }
-
-            // var policeEmergencyRequest = EntityManager.CreateEntity(_policeEmergencyRequestArchetype);
-            // EntityManager.AddComponentData(
-            //     policeEmergencyRequest,
-            //     new PoliceEmergencyRequest(
-            //         policeRequestMark,
-            //         policeRequestMark,
-            //         4f, PolicePurpose.Emergency)
-            // );
-            // EntityManager.AddComponentData(policeEmergencyRequest, new RequestGroup(4U));
-            // EntityManager.AddComponentData(policeEmergencyRequest, new ServiceRequest(true));
-            EntityManager.RemoveComponent<PoliceRequestMark>(policeRequestMark);
-        }
-    }
-
-    private void UpdateCitizenFlag(Entity policeRequestMark)
-    {
-        var criminal = EntityManager.GetComponentData<Criminal>(policeRequestMark);
-        if (
-            (criminal.m_Flags & CriminalFlags.Arrested) != 0
-            || (criminal.m_Flags & CriminalFlags.Prisoner) != 0
-        )
-        {
-            return;
         }
 
-        criminal.m_Flags = CriminalFlags.Robber | CriminalFlags.Arrested;
-        criminal.m_JailTime = 500;
-        EntityManager.SetComponentData(policeRequestMark, criminal);
-
-        var currentTransport = EntityManager.GetComponentData<CurrentTransport>(policeRequestMark);
-        var transportEntity = currentTransport.m_CurrentTransport;
-
-        if (!EntityManager.HasComponent<Resident>(transportEntity))
+        private void UpdateCitizenFlag(Entity policeRequestMark)
         {
-            Mod.GetLogger()
-                .Info($"CurrentTransport {transportEntity} does not have Resident component.");
-            return;
-        }
-
-        // TODO
-        var resident = EntityManager.GetComponentData<Resident>(transportEntity);
-        resident.m_Flags = ResidentFlags.None;
-        resident.m_Timer = 0;
-        EntityManager.SetComponentData(transportEntity, resident);
-
-        if (EntityManager.HasComponent<Target>(transportEntity))
-        {
-            var target = EntityManager.GetComponentData<Target>(transportEntity);
-            target.m_Target = Entity.Null;
-            EntityManager.SetComponentData(transportEntity, target);
-        }
-
-        // if (EntityManager.HasBuffer<PathElement>(transportEntity))
-        // {
-        //     EntityManager.GetBuffer<PathElement>(transportEntity).Clear();
-        // }
-        //
-        // if (EntityManager.HasComponent<PathOwner>(transportEntity))
-        // {
-        //     var pathOwner = EntityManager.GetComponentData<PathOwner>(transportEntity);
-        //     pathOwner.m_State = PathFlags.Pending | PathFlags.Failed;
-        //     pathOwner.m_ElementIndex = 0;
-        //     EntityManager.SetComponentData(transportEntity, pathOwner);
-        // }
-
-        TravelPurpose travelPurpose = new()
-        {
-            m_Purpose = Purpose.GoingToJail,
-            m_Resource = Resource.NoResource,
-            m_Data = 0,
-        };
-        EntityManager.AddComponentData(policeRequestMark, travelPurpose);
-    }
-
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-
-        _policeEmergencyRequestArchetype = EntityManager.CreateArchetype(
-            ComponentType.ReadWrite<ServiceRequest>(),
-            ComponentType.ReadWrite<PoliceEmergencyRequest>(),
-            ComponentType.ReadWrite<RequestGroup>()
-        );
-
-        _policeRequestMarkQuery = GetEntityQuery(
-            new EntityQueryDesc
+            var criminal = EntityManager.GetComponentData<Criminal>(policeRequestMark);
+            if (
+                (criminal.m_Flags & CriminalFlags.Arrested) != 0
+                || (criminal.m_Flags & CriminalFlags.Prisoner) != 0
+            )
             {
-                All = [ComponentType.ReadWrite<PoliceRequestMark>()],
-                None = [ComponentType.ReadOnly<Deleted>()],
+                return;
             }
-        );
 
-        RequireForUpdate(_policeRequestMarkQuery);
+            criminal.m_Flags = CriminalFlags.Robber | CriminalFlags.Arrested;
+            criminal.m_JailTime = 500;
+            EntityManager.SetComponentData(policeRequestMark, criminal);
+
+            var currentTransport = EntityManager.GetComponentData<CurrentTransport>(policeRequestMark);
+            var transportEntity = currentTransport.m_CurrentTransport;
+
+            if (!EntityManager.HasComponent<Resident>(transportEntity))
+            {
+                Mod.GetLogger()
+                    .Info($"CurrentTransport {transportEntity} does not have Resident component.");
+                return;
+            }
+
+            // TODO
+            var resident = EntityManager.GetComponentData<Resident>(transportEntity);
+            resident.m_Flags = ResidentFlags.None;
+            resident.m_Timer = 0;
+            EntityManager.SetComponentData(transportEntity, resident);
+
+            if (EntityManager.HasComponent<Target>(transportEntity))
+            {
+                var target = EntityManager.GetComponentData<Target>(transportEntity);
+                target.m_Target = Entity.Null;
+                EntityManager.SetComponentData(transportEntity, target);
+            }
+
+            // if (EntityManager.HasBuffer<PathElement>(transportEntity))
+            // {
+            //     EntityManager.GetBuffer<PathElement>(transportEntity).Clear();
+            // }
+            //
+            // if (EntityManager.HasComponent<PathOwner>(transportEntity))
+            // {
+            //     var pathOwner = EntityManager.GetComponentData<PathOwner>(transportEntity);
+            //     pathOwner.m_State = PathFlags.Pending | PathFlags.Failed;
+            //     pathOwner.m_ElementIndex = 0;
+            //     EntityManager.SetComponentData(transportEntity, pathOwner);
+            // }
+
+            TravelPurpose travelPurpose = new()
+            {
+                m_Purpose = Purpose.GoingToJail,
+                m_Resource = Resource.NoResource,
+                m_Data = 0,
+            };
+            EntityManager.AddComponentData(policeRequestMark, travelPurpose);
+        }
+
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+
+            _policeEmergencyRequestArchetype = EntityManager.CreateArchetype(
+                ComponentType.ReadWrite<ServiceRequest>(),
+                ComponentType.ReadWrite<PoliceEmergencyRequest>(),
+                ComponentType.ReadWrite<RequestGroup>()
+            );
+
+            _policeRequestMarkQuery = GetEntityQuery(
+                new EntityQueryDesc
+                {
+                    All = new[] { ComponentType.ReadWrite<PoliceRequestMark>() },
+                    None = new[] { ComponentType.ReadOnly<Deleted>() },
+                }
+            );
+
+            RequireForUpdate(_policeRequestMarkQuery);
+        }
     }
 }

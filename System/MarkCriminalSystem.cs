@@ -26,83 +26,84 @@ using Unity.Collections;
 using Unity.Entities;
 using Event = Game.Events.Event;
 
-namespace CrimeRemover.System;
-
-public sealed partial class MarkCriminalSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityQuery _addCriminalMarkQuery;
-    private EntityArchetype _criminalEventArchetype;
-
-    protected override void OnUpdate()
+    public sealed partial class MarkCriminalSystem : GameSystemBase
     {
-        var addCriminalMarks = _addCriminalMarkQuery.ToEntityArray(Allocator.Temp);
+        private EntityQuery _addCriminalMarkQuery;
+        private EntityArchetype _criminalEventArchetype;
 
-        foreach (var addCriminalMarkEntity in addCriminalMarks)
+        protected override void OnUpdate()
         {
-            if (!EntityManager.Exists(addCriminalMarkEntity))
-            {
-                continue;
-            }
+            var addCriminalMarks = _addCriminalMarkQuery.ToEntityArray(Allocator.Temp);
 
-            if (!EntityManager.HasComponent<Citizen>(addCriminalMarkEntity))
+            foreach (var addCriminalMarkEntity in addCriminalMarks)
             {
+                if (!EntityManager.Exists(addCriminalMarkEntity))
+                {
+                    continue;
+                }
+
+                if (!EntityManager.HasComponent<Citizen>(addCriminalMarkEntity))
+                {
+                    EntityManager.RemoveComponent<AddCriminalMark>(addCriminalMarkEntity);
+                    continue;
+                }
+
+                var crimeEventEntity = EntityManager.CreateEntity(_criminalEventArchetype);
+
+                var addCriminal = new AddCriminal
+                {
+                    m_Event = crimeEventEntity,
+                    m_Target = addCriminalMarkEntity,
+                    m_Flags = CriminalFlags.Robber | CriminalFlags.Planning,
+                };
+
+                var targetElement = new TargetElement { m_Entity = addCriminalMarkEntity };
+
+                var dynamicBuffer = GetBuffer<TargetElement>(crimeEventEntity);
+                dynamicBuffer.Add(targetElement);
+
+                var criminal = new Criminal(crimeEventEntity, addCriminal.m_Flags);
+                EntityManager.AddComponentData(crimeEventEntity, addCriminal);
+                EntityManager.AddComponentData(addCriminalMarkEntity, criminal);
+                EntityManager.AddComponent<CriminalMark>(addCriminalMarkEntity);
                 EntityManager.RemoveComponent<AddCriminalMark>(addCriminalMarkEntity);
-                continue;
-            }
 
-            var crimeEventEntity = EntityManager.CreateEntity(_criminalEventArchetype);
-
-            var addCriminal = new AddCriminal
-            {
-                m_Event = crimeEventEntity,
-                m_Target = addCriminalMarkEntity,
-                m_Flags = CriminalFlags.Robber | CriminalFlags.Planning,
-            };
-
-            var targetElement = new TargetElement { m_Entity = addCriminalMarkEntity };
-
-            var dynamicBuffer = GetBuffer<TargetElement>(crimeEventEntity);
-            dynamicBuffer.Add(targetElement);
-
-            var criminal = new Criminal(crimeEventEntity, addCriminal.m_Flags);
-            EntityManager.AddComponentData(crimeEventEntity, addCriminal);
-            EntityManager.AddComponentData(addCriminalMarkEntity, criminal);
-            EntityManager.AddComponent<CriminalMark>(addCriminalMarkEntity);
-            EntityManager.RemoveComponent<AddCriminalMark>(addCriminalMarkEntity);
-
-            // Remove Worker, if any. Only a jobless citizen can be a criminal.
-            if (EntityManager.HasComponent<Worker>(addCriminalMarkEntity))
-            {
-                EntityManager.RemoveComponent<Worker>(addCriminalMarkEntity);
+                // Remove Worker, if any. Only a jobless citizen can be a criminal.
+                if (EntityManager.HasComponent<Worker>(addCriminalMarkEntity))
+                {
+                    EntityManager.RemoveComponent<Worker>(addCriminalMarkEntity);
+                }
             }
         }
-    }
 
-    private DynamicBuffer<T> GetBuffer<T>(Entity entity)
-        where T : unmanaged, IBufferElementData
-    {
-        return EntityManager.HasBuffer<T>(entity)
-            ? EntityManager.GetBuffer<T>(entity)
-            : EntityManager.AddBuffer<T>(entity);
-    }
+        private DynamicBuffer<T> GetBuffer<T>(Entity entity)
+            where T : unmanaged, IBufferElementData
+        {
+            return EntityManager.HasBuffer<T>(entity)
+                ? EntityManager.GetBuffer<T>(entity)
+                : EntityManager.AddBuffer<T>(entity);
+        }
 
-    protected override void OnCreate()
-    {
-        base.OnCreate();
+        protected override void OnCreate()
+        {
+            base.OnCreate();
 
-        _addCriminalMarkQuery = GetEntityQuery(
-            new EntityQueryDesc
-            {
-                All = [ComponentType.ReadWrite<AddCriminalMark>()],
-                None = [ComponentType.ReadOnly<CriminalMark>(), ComponentType.ReadOnly<Deleted>()],
-            }
-        );
+            _addCriminalMarkQuery = GetEntityQuery(
+                new EntityQueryDesc
+                {
+                    All = new[] { ComponentType.ReadWrite<AddCriminalMark>() },
+                    None = new[] { ComponentType.ReadOnly<CriminalMark>(), ComponentType.ReadOnly<Deleted>() },
+                }
+            );
 
-        _criminalEventArchetype = EntityManager.CreateArchetype(
-            ComponentType.ReadWrite<Event>(),
-            ComponentType.ReadWrite<AddCriminal>()
-        );
+            _criminalEventArchetype = EntityManager.CreateArchetype(
+                ComponentType.ReadWrite<Event>(),
+                ComponentType.ReadWrite<AddCriminal>()
+            );
 
-        RequireForUpdate(_addCriminalMarkQuery);
+            RequireForUpdate(_addCriminalMarkQuery);
+        }
     }
 }

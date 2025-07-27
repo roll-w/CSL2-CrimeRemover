@@ -21,9 +21,10 @@
 using Colossal.Serialization.Entities;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public class PoliceRequestMark: IComponentData, IEmptySerializable
+namespace CrimeRemover.System
 {
+    public class PoliceRequestMark: IComponentData, IEmptySerializable
+    {
     
+    }
 }

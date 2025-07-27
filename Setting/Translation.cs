@@ -21,46 +21,56 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CrimeRemover.Setting;
-
-/**
- * Represents a translation
- */
-public readonly struct Translation(string key)
+namespace CrimeRemover.Setting
 {
-    public readonly string Key = key;
-    private readonly Dictionary<LocaleCode, string> _translations = new();
-
-    public Translation AddTranslation(LocaleCode locale, string translation)
+    ///
+    /// Represents a translation
+    ///
+    public readonly struct Translation
     {
-        _translations.Add(locale, translation);
-        return this;
-    }
+        public readonly string Key;
+        private readonly Dictionary<LocaleCode, string> _translations;
 
-    public string GetTranslation(LocaleCode locale)
-    {
-        if (_translations.TryGetValue(locale, out var translation))
+        ///
+        /// Represents a translation
+        ///
+        public Translation(string key)
         {
-            return translation;
+            _translations = new Dictionary<LocaleCode, string>();
+            Key = key;
         }
 
-        return _translations.TryGetValue(LocaleCode.EnUs,
-            out var defaultTranslation)
-            ? defaultTranslation
-            : Key;
+        public Translation AddTranslation(LocaleCode locale, string translation)
+        {
+            _translations.Add(locale, translation);
+            return this;
+        }
+
+        public string GetTranslation(LocaleCode locale)
+        {
+            if (_translations.TryGetValue(locale, out var translation))
+            {
+                return translation;
+            }
+
+            return _translations.TryGetValue(LocaleCode.EnUs,
+                out var defaultTranslation)
+                ? defaultTranslation
+                : Key;
+        }
+
+        public static Dictionary<string, string> ToDictionary(
+            IEnumerable<Translation> translations,
+            LocaleCode code) => translations.ToDictionary(
+            translation => translation.Key,
+            translation => translation.GetTranslation(code)
+        );
     }
 
-    public static Dictionary<string, string> ToDictionary(
-        IEnumerable<Translation> translations,
-        LocaleCode code) => translations.ToDictionary(
-        translation => translation.Key,
-        translation => translation.GetTranslation(code)
-    );
-}
-
-public enum LocaleCode
-{
-    EnUs,
-    ZhHans,
-    ZhHant
+    public enum LocaleCode
+    {
+        EnUs,
+        ZhHans,
+        ZhHant
+    }
 }

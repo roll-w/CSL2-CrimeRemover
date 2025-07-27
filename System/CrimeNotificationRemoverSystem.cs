@@ -28,104 +28,105 @@ using Game.Tools;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityQuery _policeConfigurationQuery;
-    private EntityQuery _notificationsQuery;
-    private EntityQuery _accicentSiteQuery;
-
-    protected override void OnUpdate()
+    public sealed partial class CrimeNotificationRemoverSystem : GameSystemBase
     {
-        if (!Mod.Setting.NeedRemoveNotification())
+        private EntityQuery _policeConfigurationQuery;
+        private EntityQuery _notificationsQuery;
+        private EntityQuery _accicentSiteQuery;
+
+        protected override void OnUpdate()
         {
-            return;
-        }
-
-        RemoveCrimeSceneEvents();
-
-        var policeConfigurations =
-            _policeConfigurationQuery.ToComponentDataArray<PoliceConfigurationData>(Allocator.Temp);
-
-        if (policeConfigurations.Length == 0)
-        {
-            return;
-        }
-
-        // It should only have one configuration
-        var policeConfiguration = policeConfigurations[0];
-        var crimeScenePrefab = policeConfiguration.m_CrimeSceneNotificationPrefab;
-
-        var entities = _notificationsQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (
-            var entity in from entity in entities
-            let prefabRef = EntityManager.GetComponentData<PrefabRef>(entity)
-            where prefabRef == crimeScenePrefab || prefabRef.m_Prefab == crimeScenePrefab
-            select entity
-        )
-        {
-            EntityManager.AddComponent<Deleted>(entity);
-        }
-    }
-
-    private void RemoveCrimeSceneEvents()
-    {
-        var accidentSites = _accicentSiteQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (var entity in accidentSites)
-        {
-            var accidentSite = EntityManager.GetComponentData<AccidentSite>(entity);
-            if ((accidentSite.m_Flags & AccidentSiteFlags.CrimeScene) == 0)
+            if (!Mod.Setting.NeedRemoveNotification())
             {
-                continue;
+                return;
             }
 
-            var mEvent = accidentSite.m_Event;
-            var policeRequest = accidentSite.m_PoliceRequest;
+            RemoveCrimeSceneEvents();
 
-            EntityManager.RemoveComponent<AccidentSite>(entity);
+            var policeConfigurations =
+                _policeConfigurationQuery.ToComponentDataArray<PoliceConfigurationData>(Allocator.Temp);
 
-            if (mEvent != Entity.Null && EntityManager.Exists(mEvent))
+            if (policeConfigurations.Length == 0)
             {
-                EntityManager.AddComponent<Deleted>(mEvent);
+                return;
             }
 
-            if (policeRequest != Entity.Null && EntityManager.Exists(policeRequest))
+            // It should only have one configuration
+            var policeConfiguration = policeConfigurations[0];
+            var crimeScenePrefab = policeConfiguration.m_CrimeSceneNotificationPrefab;
+
+            var entities = _notificationsQuery.ToEntityArray(Allocator.Temp);
+
+            foreach (
+                var entity in from entity in entities
+                let prefabRef = EntityManager.GetComponentData<PrefabRef>(entity)
+                where prefabRef == crimeScenePrefab || prefabRef.m_Prefab == crimeScenePrefab
+                select entity
+            )
             {
-                EntityManager.AddComponent<Deleted>(policeRequest);
+                EntityManager.AddComponent<Deleted>(entity);
             }
         }
-    }
 
-    protected override void OnCreate()
-    {
-        base.OnCreate();
+        private void RemoveCrimeSceneEvents()
+        {
+            var accidentSites = _accicentSiteQuery.ToEntityArray(Allocator.Temp);
 
-        Mod.GetLogger().Info("Setup CrimeNotificationRemoverSystem.");
+            foreach (var entity in accidentSites)
+            {
+                var accidentSite = EntityManager.GetComponentData<AccidentSite>(entity);
+                if ((accidentSite.m_Flags & AccidentSiteFlags.CrimeScene) == 0)
+                {
+                    continue;
+                }
 
-        _policeConfigurationQuery = GetEntityQuery(
-            ComponentType.ReadOnly<PoliceConfigurationData>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
+                var mEvent = accidentSite.m_Event;
+                var policeRequest = accidentSite.m_PoliceRequest;
 
-        _notificationsQuery = GetEntityQuery(
-            ComponentType.ReadOnly<Icon>(),
-            ComponentType.ReadOnly<PrefabRef>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
+                EntityManager.RemoveComponent<AccidentSite>(entity);
 
-        _accicentSiteQuery = GetEntityQuery(
-            ComponentType.ReadWrite<AccidentSite>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
+                if (mEvent != Entity.Null && EntityManager.Exists(mEvent))
+                {
+                    EntityManager.AddComponent<Deleted>(mEvent);
+                }
 
-        RequireForUpdate(_policeConfigurationQuery);
-        RequireForUpdate(_notificationsQuery);
-        RequireForUpdate(_accicentSiteQuery);
+                if (policeRequest != Entity.Null && EntityManager.Exists(policeRequest))
+                {
+                    EntityManager.AddComponent<Deleted>(policeRequest);
+                }
+            }
+        }
+
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+
+            Mod.GetLogger().Info("Setup CrimeNotificationRemoverSystem.");
+
+            _policeConfigurationQuery = GetEntityQuery(
+                ComponentType.ReadOnly<PoliceConfigurationData>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            _notificationsQuery = GetEntityQuery(
+                ComponentType.ReadOnly<Icon>(),
+                ComponentType.ReadOnly<PrefabRef>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            _accicentSiteQuery = GetEntityQuery(
+                ComponentType.ReadWrite<AccidentSite>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            RequireForUpdate(_policeConfigurationQuery);
+            RequireForUpdate(_notificationsQuery);
+            RequireForUpdate(_accicentSiteQuery);
+        }
     }
 }

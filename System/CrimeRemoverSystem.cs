@@ -26,106 +26,107 @@ using Game.Tools;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CrimeRemover.System;
-
-public sealed partial class CrimeRemoverSystem : GameSystemBase
+namespace CrimeRemover.System
 {
-    private EntityQuery _crimeProducersQuery;
-
-    protected override void OnUpdate()
+    public sealed partial class CrimeRemoverSystem : GameSystemBase
     {
-        if (!Mod.Setting.EnableCrimeRemover)
+        private EntityQuery _crimeProducersQuery;
+
+        protected override void OnUpdate()
         {
-            return;
-        }
-
-        var maxCrime = Mod.Setting.MaxCrime;
-        var buildingPercentage = Mod.Setting.CrimeBuildingPercentage;
-        var crimePercentage = Mod.Setting.CrimePercentage;
-        var crimeCoefficient = maxCrime * crimePercentage / 100;
-
-        var entities = _crimeProducersQuery.ToEntityArray(Allocator.Temp);
-        var length = entities.Length;
-
-        var wouldBeCrime = 0;
-        if (buildingPercentage > 0)
-        {
-            wouldBeCrime = (int)(length * buildingPercentage / 100);
-        }
-
-        for (var index = 0; index < length; index++)
-        {
-            var entity = entities[index];
-            var crimeProducer = EntityManager.GetComponentData<CrimeProducer>(entity);
-
-            if (index < wouldBeCrime)
+            if (!Mod.Setting.EnableCrimeRemover)
             {
-                crimeProducer.m_Crime = crimeCoefficient;
-                crimeProducer = CheckCrimePatrolRequest(crimeProducer, !Mod.Setting.PolicePatrol);
+                return;
+            }
+
+            var maxCrime = Mod.Setting.MaxCrime;
+            var buildingPercentage = Mod.Setting.CrimeBuildingPercentage;
+            var crimePercentage = Mod.Setting.CrimePercentage;
+            var crimeCoefficient = maxCrime * crimePercentage / 100;
+
+            var entities = _crimeProducersQuery.ToEntityArray(Allocator.Temp);
+            var length = entities.Length;
+
+            var wouldBeCrime = 0;
+            if (buildingPercentage > 0)
+            {
+                wouldBeCrime = (int)(length * buildingPercentage / 100);
+            }
+
+            for (var index = 0; index < length; index++)
+            {
+                var entity = entities[index];
+                var crimeProducer = EntityManager.GetComponentData<CrimeProducer>(entity);
+
+                if (index < wouldBeCrime)
+                {
+                    crimeProducer.m_Crime = crimeCoefficient;
+                    crimeProducer = CheckCrimePatrolRequest(crimeProducer, !Mod.Setting.PolicePatrol);
+                    EntityManager.SetComponentData(entity, crimeProducer);
+                    continue;
+                }
+
+                if (crimeProducer.m_Crime <= 0)
+                {
+                    continue;
+                }
+
+                crimeProducer.m_Crime = 0;
+                crimeProducer = CheckCrimePatrolRequest(crimeProducer);
                 EntityManager.SetComponentData(entity, crimeProducer);
-                continue;
             }
-
-            if (crimeProducer.m_Crime <= 0)
-            {
-                continue;
-            }
-
-            crimeProducer.m_Crime = 0;
-            crimeProducer = CheckCrimePatrolRequest(crimeProducer);
-            EntityManager.SetComponentData(entity, crimeProducer);
         }
-    }
 
-    private CrimeProducer CheckCrimePatrolRequest(CrimeProducer crimeProducer, bool remove = true)
-    {
-        if (!remove)
+        private CrimeProducer CheckCrimePatrolRequest(CrimeProducer crimeProducer, bool remove = true)
         {
+            if (!remove)
+            {
+                return crimeProducer;
+            }
+
+            var rawRequest = crimeProducer.m_PatrolRequest;
+            if (rawRequest == default || rawRequest == Entity.Null)
+            {
+                return crimeProducer;
+            }
+
+            crimeProducer.m_PatrolRequest = default;
+            try
+            {
+                if (EntityManager.Exists(rawRequest))
+                {
+                    EntityManager.AddComponent<Deleted>(rawRequest);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             return crimeProducer;
         }
 
-        var rawRequest = crimeProducer.m_PatrolRequest;
-        if (rawRequest == default || rawRequest == Entity.Null)
+        protected override void OnCreate()
         {
-            return crimeProducer;
+            base.OnCreate();
+
+            _crimeProducersQuery = GetEntityQuery(
+                ComponentType.ReadWrite<CrimeProducer>(),
+                ComponentType.Exclude<Deleted>(),
+                ComponentType.Exclude<Temp>()
+            );
+
+            RequireForUpdate(_crimeProducersQuery);
         }
 
-        crimeProducer.m_PatrolRequest = default;
-        try
+        public override int GetUpdateInterval(SystemUpdatePhase phase)
         {
-            if (EntityManager.Exists(rawRequest))
-            {
-                EntityManager.AddComponent<Deleted>(rawRequest);
-            }
-        }
-        catch (Exception)
-        {
-            // ignored
+            return 1;
         }
 
-        return crimeProducer;
-    }
-
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-
-        _crimeProducersQuery = GetEntityQuery(
-            ComponentType.ReadWrite<CrimeProducer>(),
-            ComponentType.Exclude<Deleted>(),
-            ComponentType.Exclude<Temp>()
-        );
-
-        RequireForUpdate(_crimeProducersQuery);
-    }
-
-    public override int GetUpdateInterval(SystemUpdatePhase phase)
-    {
-        return 1;
-    }
-
-    public override int GetUpdateOffset(SystemUpdatePhase phase)
-    {
-        return -1;
+        public override int GetUpdateOffset(SystemUpdatePhase phase)
+        {
+            return -1;
+        }
     }
 }

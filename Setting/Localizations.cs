@@ -27,7 +27,7 @@ namespace CrimeRemover.Setting
     {
         // TODO: generate keys using ModSettings
         private static readonly Translation[] Translations =
-        [
+        {
             new Translation("Options.SECTION[CrimeRemover.CrimeRemover.Mod]")
                 .AddTranslation(LocaleCode.EnUs, "Crime Remover")
                 .AddTranslation(LocaleCode.ZhHans, "犯罪移除器")
@@ -156,7 +156,7 @@ namespace CrimeRemover.Setting
                     " but the original occupation will not be restored.")
                 .AddTranslation(LocaleCode.ZhHans, "移除当前选中市民的罪犯标记，将其恢复为普通市民，但原有职业不会恢复。")
                 .AddTranslation(LocaleCode.ZhHant, "移除當前選中市民的罪犯標記，將其恢復為普通市民，但原有職業不會恢復。"),
-        ];
+        };
 
         public static void LoadTranslations()
         {

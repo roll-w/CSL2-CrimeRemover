@@ -21,6 +21,9 @@
 using Colossal.Serialization.Entities;
 using Unity.Entities;
 
-namespace StationNaming.System;
-
-public struct Selected : IComponentData, IEmptySerializable;
+namespace CrimeRemover.System
+{
+    public struct Selected : IComponentData, IEmptySerializable
+    {
+    }
+}

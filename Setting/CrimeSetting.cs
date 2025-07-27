@@ -22,89 +22,94 @@ using Colossal.IO.AssetDatabase;
 using Game.Modding;
 using Game.Settings;
 
-namespace CrimeRemover.Setting;
-
-[FileLocation(Mod.Name)]
-[SettingsUIShowGroupName(Experimental)]
-public class CrimeSetting(IMod mod) : ModSetting(mod)
+namespace CrimeRemover.Setting
 {
-    private const string Experimental = "Experimental";
-
-    /**
-     * Enable or disable the crime remover
-     */
-    public bool EnableCrimeRemover { get; set; } = true;
-
-    public bool IsDisabled()
+    [FileLocation(Mod.Name)]
+    [SettingsUIShowGroupName(Experimental)]
+    public class CrimeSetting : ModSetting
     {
-        return !EnableCrimeRemover;
-    }
-
-    [SettingsUISection(Experimental)]
-    [SettingsUIDisableByCondition(typeof(CrimeSetting), nameof(IsDisabled))]
-    public bool RemoveCriminals { get; set; } = true;
-
-    /**
-     * Set the global buildings crime percentage
-     *
-     * Must be between 0 and 100
-     */
-    [SettingsUISlider(max = 100, min = 0, step = 1)]
-    [SettingsUISection(Experimental)]
-    public float CrimeBuildingPercentage { get; set; } = 0;
-
-    /**
-     * The maximum crime value
-     */
-    [SettingsUISlider(max = 100000, min = 0, step = 1000)]
-    [SettingsUISection(Experimental)]
-    public float MaxCrime { get; set; } = 25000;
-
-    /**
-     * The scale of the building crime percentage
-     */
-    [SettingsUISlider(max = 100, min = 0, step = 1)]
-    [SettingsUISection(Experimental)]
-    public float CrimePercentage { get; set; } = 0;
-
-    /**
-     * Enable police patrol
-     */
-    [SettingsUISection(Experimental)]
-    public bool PolicePatrol { get; set; } = true;
-
-    /**
-     * Remove the notification when the crime is removed
-     */
-    [SettingsUISection(Experimental)]
-    public NotificationType RemoveNotification { get; set; } = NotificationType.NeverRemove;
-
-    public bool NeedRemoveNotification()
-    {
-        return RemoveNotification switch
+        public CrimeSetting(IMod mod) : base(mod)
         {
-            NotificationType.AlwaysRemove => true,
-            NotificationType.NeverRemove => false,
-            NotificationType.OnlyEnable => EnableCrimeRemover,
-            // if the building crime percentage is greater than 0,
-            // then we will not remove the notification
-            NotificationType.OnlyPercentage => EnableCrimeRemover && CrimePercentage == 0,
-            _ => false
-        };
-    }
+        }
 
-    public override void SetDefaults()
-    {
-        EnableCrimeRemover = true;
-        CrimeBuildingPercentage = 0;
-        CrimePercentage = 0;
-        MaxCrime = 25000;
-        PolicePatrol = true;
-        RemoveNotification = NotificationType.NeverRemove;
-    }
+        private const string Experimental = "Experimental";
 
-    public override void Apply()
-    {
-        base.Apply();
+        /**
+         * Enable or disable the crime remover
+         */
+        public bool EnableCrimeRemover { get; set; } = true;
+
+        public bool IsDisabled()
+        {
+            return !EnableCrimeRemover;
+        }
+
+        [SettingsUISection(Experimental)]
+        [SettingsUIDisableByCondition(typeof(CrimeSetting), nameof(IsDisabled))]
+        public bool RemoveCriminals { get; set; } = true;
+
+        /**
+         * Set the global buildings crime percentage
+         *
+         * Must be between 0 and 100
+         */
+        [SettingsUISlider(max = 100, min = 0, step = 1)]
+        [SettingsUISection(Experimental)]
+        public float CrimeBuildingPercentage { get; set; } = 0;
+
+        /**
+         * The maximum crime value
+         */
+        [SettingsUISlider(max = 100000, min = 0, step = 1000)]
+        [SettingsUISection(Experimental)]
+        public float MaxCrime { get; set; } = 25000;
+
+        /**
+         * The scale of the building crime percentage
+         */
+        [SettingsUISlider(max = 100, min = 0, step = 1)]
+        [SettingsUISection(Experimental)]
+        public float CrimePercentage { get; set; } = 0;
+
+        /**
+         * Enable police patrol
+         */
+        [SettingsUISection(Experimental)]
+        public bool PolicePatrol { get; set; } = true;
+
+        /**
+         * Remove the notification when the crime is removed
+         */
+        [SettingsUISection(Experimental)]
+        public NotificationType RemoveNotification { get; set; } = NotificationType.NeverRemove;
+
+        public bool NeedRemoveNotification()
+        {
+            return RemoveNotification switch
+            {
+                NotificationType.AlwaysRemove => true,
+                NotificationType.NeverRemove => false,
+                NotificationType.OnlyEnable => EnableCrimeRemover,
+                // if the building crime percentage is greater than 0,
+                // then we will not remove the notification
+                NotificationType.OnlyPercentage => EnableCrimeRemover && CrimePercentage == 0,
+                _ => false
+            };
+        }
+
+        public override void SetDefaults()
+        {
+            EnableCrimeRemover = true;
+            CrimeBuildingPercentage = 0;
+            CrimePercentage = 0;
+            MaxCrime = 25000;
+            PolicePatrol = true;
+            RemoveNotification = NotificationType.NeverRemove;
+        }
+
+        public override void Apply()
+        {
+            base.Apply();
+        }
     }
 }
