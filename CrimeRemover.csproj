@@ -5,9 +5,9 @@
         <AssemblyTitle>$(Title)</AssemblyTitle>
         <Description>Mod for Cities: Skylines 2 that removes crime from your city.</Description>
         <Authors>RollW</Authors>
-        <Copyright>Copyright (c) 2024 RollW (github.com/Roll-W). All rights reserved.</Copyright>
+        <Copyright>Copyright (c) 2024 RollW (github.com/roll-w). All rights reserved.</Copyright>
         <Product>$(Title)</Product>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 
         <OutputType>Library</OutputType>

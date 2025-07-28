@@ -50,15 +50,14 @@ forum post.
 	<!--Link to the forum post where the mod can be discussed-->
 	<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/crime-remover.1656233" />
 	<!--Version of the mod-->
-	<ModVersion Value="1.1.0" />
+	<ModVersion Value="1.1.1" />
 	<!--Recommended version of the base game to use the mod-->
 	<GameVersion Value="1.*" />
 	<!--Dependency for the mod, can be set multiple times-->
 	<Dependency Id="" />
 	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 	<ChangeLog>
-- Feature: Support mark or unmark citizens as criminals.
-- Fix: A issue that causes the game to crash in some rare cases.
+- Fix: Compatibility with 1.3.3.f1.
 	</ChangeLog>
 	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
 	<ExternalLink Type="github" Url="https://github.com/Roll-W/CSL2-CrimeRemover" />
